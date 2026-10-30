@@ -5,7 +5,7 @@ import { useLoaderData, useLocation } from "react-router-dom";
 import BotonSalir from "../../components/BotonSalir";
 import { formatearFecha } from "../../utils/funciones";
 import NavegadorLider from "../../components/NavegadorLider";
-import { Alert } from "react-bootstrap";
+import { Alert } from "@/components/ui";
 import { useUsuario } from "../../context/usuarioContext";
 
 export default function VerPlan() {

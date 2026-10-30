@@ -3,11 +3,12 @@ import Navegador from "../../components/Navegador";
 import Footer from "../../components/Footer";
 import Contenedor from "../../components/Contenedor";
 import { useLoaderData } from "react-router-dom";
-import { Table } from "react-bootstrap";
+import { Table } from "@/components/ui";
 import BotonSalir from "../../components/BotonSalir";
 
 export default function ListaPerfiles() {
-  const perfiles = useLoaderData();
+  const perfilesLoader = useLoaderData();
+  const perfiles = Array.isArray(perfilesLoader) ? perfilesLoader : perfilesLoader?.perfiles ?? [];
 
   return (
     <>
@@ -25,9 +26,9 @@ export default function ListaPerfiles() {
             Nuevo perfil
           </Button> */}
           <Table size="sm" hover className="mt-2">
-            <thead className="table-info">
+            <thead className="bg-[#cff4fc]">
               <tr>
-                <th>Perfiles</th>
+                <th className="text-center">Perfiles</th>
                 {/* <th>Opciones</th> */}
               </tr>
             </thead>

@@ -5,7 +5,7 @@ import NavegadorLider from "../../components/NavegadorLider";
 import BotonSalir from "../../components/BotonSalir";
 import { useLoaderData, useLocation } from "react-router-dom";
 import { formatearFecha, formatearFechaHora, modificarImpacto, modificarProbabilidad } from "../../utils/funciones";
-import { Alert } from "react-bootstrap";
+import { Alert } from "@/components/ui";
 import { useUsuario } from "../../context/usuarioContext";
 
 export default function VerEvaluacion() {

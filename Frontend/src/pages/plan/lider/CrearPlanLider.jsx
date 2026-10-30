@@ -4,7 +4,7 @@ import Footer from "../../../components/Footer";
 import Contenedor from "../../../components/Contenedor";
 import { crearPlan } from "../../../services/planes";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { Button, Form, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import { Button, Form, OverlayTrigger, Table, Tooltip } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
@@ -300,7 +300,7 @@ export default function CrearPlanLider() {
               ) : null}
             </Form.Select>
             {errorPrincipal.tipo && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Seleccione el tipo de plan.
               </Form.Text>
             )}
@@ -318,7 +318,7 @@ export default function CrearPlanLider() {
               isInvalid={errorPrincipal.descripcion}
             />
             {errorPrincipal.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la descripción no este vacía.
               </Form.Text>
             )}
@@ -332,7 +332,7 @@ export default function CrearPlanLider() {
               Agregar Tarea
             </Button>
             <Table size="sm" hover className="mt-2">
-              <thead className="table-info">
+              <thead className="bg-blue-50">
                 <tr className="th">
                   <th>Tarea</th>
                   <th>Responsable</th>
@@ -404,7 +404,7 @@ export default function CrearPlanLider() {
               </tbody>
             </Table>
             {errorPrincipal.tareas && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 El plan debe tener al menos una tarea.
               </Form.Text>
             )}
@@ -459,7 +459,7 @@ export default function CrearPlanLider() {
               isInvalid={errorTarea.nombre || errorTarea.nombre_igual}
             />
             {errorTarea.nombre || errorTarea.nombre_igual ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formDataTarea.nombre.length === 0
                   ? "no este vacío"
@@ -482,7 +482,7 @@ export default function CrearPlanLider() {
               isInvalid={errorTarea.descripcion}
             />
             {errorTarea.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la descripción no este vacía.
               </Form.Text>
             )}
@@ -503,7 +503,7 @@ export default function CrearPlanLider() {
             />
             {errorTarea.fecha_inicio ||
             errorTarea.fecha_inicio_antes_iteracion ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la fecha{" "}
                 {errorTarea.fecha_inicio
                   ? "no este vacía"
@@ -531,7 +531,7 @@ export default function CrearPlanLider() {
             {errorTarea.fecha_fin ||
             errorTarea.fecha_fin_antes ||
             errorTarea.fecha_fin_despues_iteracion ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la fecha{" "}
                 {errorTarea.fecha_fin
                   ? "no este vacía"
@@ -561,7 +561,7 @@ export default function CrearPlanLider() {
                 ))
               : null}
             {errorTarea.responsables && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Seleccione al menos un responsable.
               </Form.Text>
             )}
@@ -597,7 +597,7 @@ export default function CrearPlanLider() {
                     isInvalid={errorTarea.nombre || errorTarea.nombre_igual}
                   />
                   {errorTarea.nombre || errorTarea.nombre_igual ? (
-                    <Form.Text className="text-danger">
+                    <Form.Text className="text-red-600">
                       Revise que el nombre{" "}
                       {formDataTarea.nombre.length === 0
                         ? "no este vacío"
@@ -620,7 +620,7 @@ export default function CrearPlanLider() {
                     isInvalid={errorTarea.descripcion}
                   />
                   {errorTarea.descripcion && (
-                    <Form.Text className="text-danger">
+                    <Form.Text className="text-red-600">
                       Revise que la descripción no este vacía.
                     </Form.Text>
                   )}
@@ -641,7 +641,7 @@ export default function CrearPlanLider() {
                   />
                   {errorTarea.fecha_inicio ||
                   errorTarea.fecha_inicio_antes_iteracion ? (
-                    <Form.Text className="text-danger">
+                    <Form.Text className="text-red-600">
                       Revise que la fecha{" "}
                       {errorTarea.fecha_inicio
                         ? "no este vacía"
@@ -669,7 +669,7 @@ export default function CrearPlanLider() {
                   {errorTarea.fecha_fin ||
                   errorTarea.fecha_fin_antes ||
                   errorTarea.fecha_fin_despues_iteracion ? (
-                    <Form.Text className="text-danger">
+                    <Form.Text className="text-red-600">
                       Revise que la fecha{" "}
                       {errorTarea.fecha_fin
                         ? "no este vacía"
@@ -706,7 +706,7 @@ export default function CrearPlanLider() {
                       ))
                     : null}
                   {errorTarea.responsables && (
-                    <Form.Text className="text-danger">
+                    <Form.Text className="text-red-600">
                       Seleccione al menos un responsable.
                     </Form.Text>
                   )}

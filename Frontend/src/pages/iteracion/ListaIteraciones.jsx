@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import NavegadorLider from '../../components/NavegadorLider'
 import Contenedor from '../../components/Contenedor'
-import { Alert, Button, OverlayTrigger, Table, Tooltip } from 'react-bootstrap';
+import { Alert, Button, OverlayTrigger, Table, Tooltip } from "@/components/ui";
 import { useNavigate, useLoaderData } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';

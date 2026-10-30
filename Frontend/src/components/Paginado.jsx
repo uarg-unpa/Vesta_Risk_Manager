@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pagination } from 'react-bootstrap'
+import { Pagination } from "@/components/ui"
 
 export default function Paginado({paginaActual, setPaginaActual, totalPaginas}) {
   return (

@@ -1,7 +1,7 @@
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button } from "@/components/ui";
 import { useNavigate } from "react-router-dom";
 /**
  * Componente BotonSalir

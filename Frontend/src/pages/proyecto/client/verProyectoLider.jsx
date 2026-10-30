@@ -1,15 +1,16 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import NavegadorLider from "../../../components/NavegadorLider";
 import Footer from "../../../components/Footer";
 import {
   Alert,
   Card,
+  CardTitle,
   Col,
   Container,
   Dropdown,
   Form,
   Row,
-} from "react-bootstrap";
+} from "@/components/ui";
 
 import {
   Chart as ChartJS,
@@ -50,7 +51,8 @@ export default function VerProyectoLider() {
   const grafico_evolucion = useRef(null);
   const grafico_resumen = useRef(null);
   const grafico_matriz = useRef(null);
-  const { datosRiesgos, iteracion } = useLoaderData();
+  const { datosRiesgos: datosRiesgosLoader = {}, iteracion, proyecto: proyectoLoader } = useLoaderData();
+  const datosRiesgos = datosRiesgosLoader ?? {};
   const {
     datos_proyecto,
     iteraciones,
@@ -93,13 +95,14 @@ export default function VerProyectoLider() {
   const [datosAlto, setDatosAlto] = useState(datos_alto);
   const [datosCritico, setDatosCritico] = useState(datos_critico);
 
-  const puntos = evaluacion_tongji.map((item) => ({
+  const puntos = (evaluacion_tongji ?? []).map((item) => ({
     x: parseInt(item.x),
     y: parseInt(item.y),
     label: item.label > 9 ? `RK${item.label}` : `RK0${item.label}`,
   }));
 
-  const proyecto = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
+  const proyectoGuardado = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
+  const proyecto = proyectoLoader ?? proyectoGuardado ?? { nombre: "Proyecto" };
 
   const toggleIteracion = (nombreIteracion) => {
     const index = iteracionesSeleccionadas.indexOf(nombreIteracion);
@@ -194,13 +197,16 @@ export default function VerProyectoLider() {
         </Alert>
       ) : null}
       <>
-        <Container className="mt-2 mx-0 d-flex flex-column justify-content-around">
-          <Row className="d-flex flex-nowrap" style={{ height: "50vh", gap:"2em" }}>
+        <Container className="!mx-0 !max-w-none mt-2 flex flex-col justify-around">
+          <Row
+            className="flex"
+            style={{ height: "50vh", gap: "2em", flexWrap: "nowrap", width: "100%" }}
+          >
             <Col xs={9}>
               <Card style={{ maxHeight: "50vh" }}>
-                <Card.Header className="d-flex justify-content-between align-items-center">
-                  Evolución de cantidad de riesgo
-                  <div className="d-flex align-items-center gap-2">
+                  <Card.Header className="flex justify-between items-center">
+                    <CardTitle>Evolución de cantidad de riesgo</CardTitle>
+                  <div className="flex items-center gap-2">
                     <Dropdown>
                       <Dropdown.Toggle variant="primary" id="dropdown-basic">
                         {"Seleccionar iteración"}
@@ -338,8 +344,8 @@ export default function VerProyectoLider() {
             </Col>
             <Col xs={5} style={{ width: "30vw" }}>
               <Card style={{ maxHeight: "55vh" }}>
-                <Card.Header className="d-flex justify-content-between align-items-center">
-                  Resúmen de riesgos
+                  <Card.Header className="flex justify-between items-center">
+                    <CardTitle>Resúmen de riesgos</CardTitle>
                   {!comprobacionEspectador && (
                     <FontAwesomeIcon
                       icon={faDownload}
@@ -395,7 +401,7 @@ export default function VerProyectoLider() {
               }}
             >
               <h2
-                className="text-center fs-4"
+                className="text-center text-xl"
                 style={{ textDecoration: "underline" }}
               >
                 Sobre el proyecto
@@ -403,19 +409,22 @@ export default function VerProyectoLider() {
             </Col>
             <Col xs={3}></Col>
           </Row>
-          <Row className="d-flex flex-nowrap">
+          <Row
+            className="flex"
+            style={{ flexWrap: "nowrap", width: "100%" }}
+          >
             <Col xs={9}>
               <Row className="mb-3">
                 <Col xs={3}>
                   <Card>
                     <Card.Header
-                      className="d-flex justify-content-center align-items-center"
+                      className="flex justify-center items-center"
                       style={{ minHeight: 65 }}
                     >
-                      Riesgos activos
+                      <CardTitle className="mb-0 text-center">Riesgos activos</CardTitle>
                     </Card.Header>
                     <Card.Body>
-                      <Card.Text className="text-center fs-1">
+                      <Card.Text className="text-center text-4xl">
                         {datos_proyecto?.riesgos_activos ?? 0}
                       </Card.Text>
                     </Card.Body>
@@ -424,12 +433,12 @@ export default function VerProyectoLider() {
                 <Col xs={3}>
                   <Card>
                     <Card.Header
-                      className="d-flex justify-content-center align-items-center"
+                      className="flex justify-center items-center"
                     style={{ minHeight: 65, textAlign: "center" }}>
-                      Evaluaciones pendientes
+                      <CardTitle className="mb-0 text-center">Evaluaciones pendientes</CardTitle>
                     </Card.Header>
                     <Card.Body>
-                      <Card.Text className="text-center fs-1">
+                      <Card.Text className="text-center text-4xl">
                         {datos_proyecto?.evaluaciones_pendientes ?? 0}
                       </Card.Text>
                     </Card.Body>
@@ -438,13 +447,13 @@ export default function VerProyectoLider() {
                 <Col xs={3}>
                   <Card>
                     <Card.Header
-                      className="d-flex justify-content-center align-items-center"
+                      className="flex justify-center items-center"
                       style={{ minHeight: 65 }}
                     >
-                      Planes de acción
+                      <CardTitle className="mb-0 text-center">Planes de acción</CardTitle>
                     </Card.Header>
                     <Card.Body>
-                      <Card.Text className="text-center fs-1">
+                      <Card.Text className="text-center text-4xl">
                         {datos_proyecto?.planes_accion ?? 0}
                       </Card.Text>
                     </Card.Body>
@@ -453,13 +462,13 @@ export default function VerProyectoLider() {
                 <Col>
                   <Card>
                     <Card.Header
-                      className="d-flex justify-content-center align-items-center"
+                      className="flex justify-center items-center"
                       style={{ minHeight: 65 }}
                     >
-                      Requiere atención
+                      <CardTitle className="mb-0 text-center">Requiere atención</CardTitle>
                     </Card.Header>
                     <Card.Body>
-                      <Card.Text className="text-center fs-1">
+                      <Card.Text className="text-center text-4xl">
                         {datos_proyecto?.riesgos_atencion ?? 0}
                       </Card.Text>
                     </Card.Body>
@@ -469,8 +478,8 @@ export default function VerProyectoLider() {
             </Col>
             <Col xs={5} style={{ width: "40%" }}>
               <Card style={{ maxHeight: "65vh" }}>
-                <Card.Header className="d-flex justify-content-between align-items-center">
-                  Matriz tongji
+                <Card.Header className="flex justify-between items-center">
+                  <CardTitle>Matriz tongji</CardTitle>
                   {!comprobacionEspectador && (
                     <FontAwesomeIcon
                       icon={faDownload}

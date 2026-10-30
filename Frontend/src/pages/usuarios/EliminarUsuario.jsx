@@ -4,7 +4,7 @@ import Footer from "../../components/Footer";
 import Contenedor from "../../components/Contenedor";
 import { eliminarUsuario } from "../../services/usuarios";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,

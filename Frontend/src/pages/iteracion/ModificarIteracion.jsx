@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import ModalPersonalizado from "../../components/ModalPersonalizado";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "@/components/ui";
 import {
   comprobarFechasNuevaIteracion,
   verificarError,
@@ -181,13 +181,13 @@ const ModificarIteracion = forwardRef(
               type="text"
               name="nombre"
               placeholder="Ingrese el nombre de la iteración"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.nombre}
               onChange={handleChangeIteracion}
               isInvalid={errorIteracion.nombre || errorIteracion.nombreIgual}
             />
             {errorIteracion.nombre || errorIteracion.nombreIgual ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formDataIteracion.nombre.length === 0
                   ? "no este vacío"
@@ -205,7 +205,7 @@ const ModificarIteracion = forwardRef(
             <Form.Control
               type="date"
               name="fecha_inicio"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.fecha_inicio}
               onChange={handleChangeIteracion}
               isInvalid={
@@ -214,7 +214,7 @@ const ModificarIteracion = forwardRef(
             />
             {errorIteracion.fecha_inicio ||
             errorIteracion.fechasSuperpuestas ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 {errorIteracion.fecha_inicio
                   ? "Revise que la fecha de inicio de la iteración no este vacía"
                   : errorIteracion.fechasSuperpuestas
@@ -231,7 +231,7 @@ const ModificarIteracion = forwardRef(
             <Form.Control
               type="date"
               name="fecha_fin"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.fecha_fin}
               onChange={handleChangeIteracion}
               isInvalid={
@@ -239,7 +239,7 @@ const ModificarIteracion = forwardRef(
               }
             />
             {errorIteracion.fecha_fin || errorIteracion.fechasFinAntes ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 {errorIteracion.fecha_fin
                   ? "Revise que la fecha de finalización de la iteración no este vacía"
                   : errorIteracion.fechasFinAntes

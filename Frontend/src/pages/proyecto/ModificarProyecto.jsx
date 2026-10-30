@@ -9,7 +9,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -34,7 +34,13 @@ import ModalPersonalizado from "../../components/ModalPersonalizado";
 import Paginado from "../../components/Paginado";
 
 export default function ModificarProyecto() {
-  const { proyecto } = useLoaderData();
+  const { proyecto: proyectoLoader = {} } = useLoaderData();
+  const proyecto = {
+    ...proyectoLoader,
+    participantes: proyectoLoader.participantes ?? [],
+    iteraciones: proyectoLoader.iteraciones ?? [],
+    categorias: proyectoLoader.categorias ?? [],
+  };
 
   const { id_proyecto } = useParams();
   const navigate = useNavigate();
@@ -622,7 +628,7 @@ export default function ModificarProyecto() {
               isInvalid={errorPrincipal.nombre || errorPrincipal.nombreIgual}
             />
             {(errorPrincipal.nombre || errorPrincipal.nombreIgual) && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formData.nombre.length === 0
                   ? "no este vacío"
@@ -647,7 +653,7 @@ export default function ModificarProyecto() {
               isInvalid={errorPrincipal.descripcion}
             />
             {errorPrincipal.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la descripción no este vacía.
               </Form.Text>
             )}
@@ -662,18 +668,18 @@ export default function ModificarProyecto() {
               Agregar Participante
             </Button>
             <Table size="sm" hover className="mt-2">
-              <thead className="table-info">
+              <thead className="bg-[#cff4fc]">
                 <tr>
-                  <th>Participantes</th>
-                  <th>Rol</th>
-                  <th>Opciones</th>
+                  <th className="text-center">Participantes</th>
+                  <th className="text-center">Rol</th>
+                  <th className="text-center" style={{ minWidth: "12em" }}>Opciones</th>
                 </tr>
               </thead>
               <tbody>
                 {formData.participantes && formData.participantes.length > 0
                   ? formData.participantes.map((item, key) => (
                       <tr key={key}>
-                        <td>
+                        <td style={{ minWidth: "12em", textAlign: "center" }}>
                           {item.nombre ? item.nombre : item.nombre_usuario}
                         </td>
                         <td>{item.rol}</td>
@@ -734,12 +740,12 @@ export default function ModificarProyecto() {
               Agregar Iteración
             </Button>
             <Table size="sm" hover className="mt-2">
-              <thead className="table-info">
+              <thead className="bg-[#cff4fc]">
                 <tr>
-                  <th>Nombre</th>
-                  <th>Fecha de inicio</th>
-                  <th>Fecha de finalización</th>
-                  <th>Opciones</th>
+                  <th className="text-center">Nombre</th>
+                  <th className="text-center">Fecha de inicio</th>
+                  <th className="text-center">Fecha de finalización</th>
+                  <th className="text-center" style={{ minWidth: "12em" }}>Opciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -750,7 +756,7 @@ export default function ModificarProyecto() {
                           <td>{item.nombre}</td>
                           <td>{formatearFecha(item.fecha_inicio)}</td>
                           <td>{formatearFecha(item.fecha_fin)}</td>
-                          <td>
+                            <td style={{ minWidth: "12em", textAlign: "center" }}>
                             <OverlayTrigger
                               placement="top"
                               overlay={
@@ -805,10 +811,10 @@ export default function ModificarProyecto() {
             </Form.Label>
             <br></br>
             <Table size="sm" hover className="mt-2">
-              <thead className="table-info">
+              <thead className="bg-[#cff4fc]">
                 <tr>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
+                  <th className="text-center">Nombre</th>
+                  <th className="text-center">Descripción</th>
                 </tr>
               </thead>
               <tbody>
@@ -850,6 +856,7 @@ export default function ModificarProyecto() {
 
       <ModalPersonalizado
         title={"Añadir Participante"}
+        placement="top"
         show={mostrarParticipante}
         setShow={setMostrarParticipante}
         onConfirm={handleClickParticipante}
@@ -876,11 +883,11 @@ export default function ModificarProyecto() {
           }}
         >
           <h5>Buscar Participante</h5>
-          <Form.Group className="d-flex align-items-center mb-2">
+          <Form.Group className="flex items-center mb-2">
             <Form.Control
               type="text"
               placeholder="Ingrese el nombre del participante"
-              className="w-75"
+              className="w-3/4"
               name="nombre"
               onChange={(e) => {
                 handleChangeParticipante(e);
@@ -908,7 +915,7 @@ export default function ModificarProyecto() {
             />
           </Form.Group>
           {errorParticipante.nombre && (
-            <Form.Text className="text-danger">
+            <Form.Text className="text-red-600">
               Revise que el campo no esta vacío.
             </Form.Text>
           )}
@@ -935,7 +942,7 @@ export default function ModificarProyecto() {
               <p>No hay participantes disponibles.</p>
             )}
             {errorParticipante.usuarioElegido && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Seleccione un participante.
               </Form.Text>
             )}
@@ -964,7 +971,7 @@ export default function ModificarProyecto() {
               isInvalid={errorParticipante.rol}
             />
             {errorParticipante.rol && (
-              <Form.Text className="text-danger">Seleccione un rol.</Form.Text>
+              <Form.Text className="text-red-600">Seleccione un rol.</Form.Text>
             )}
           </Form.Group>
         </Form>
@@ -972,6 +979,7 @@ export default function ModificarProyecto() {
 
       <ModalPersonalizado
         title={"Añadir Iteración"}
+        placement="top"
         show={mostrarIteracion}
         setShow={setMostrarIteracion}
         onConfirm={handleClickIteracion}
@@ -996,13 +1004,13 @@ export default function ModificarProyecto() {
               type="text"
               name="nombre"
               placeholder="Ingrese el nombre de la iteración"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.nombre}
               onChange={handleChangeIteracion}
               isInvalid={errorIteracion.nombre || errorIteracion.nombreIgual}
             />
             {errorIteracion.nombre || errorIteracion.nombreIgual ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formDataIteracion.nombre.length === 0
                   ? "no este vacío"
@@ -1020,7 +1028,7 @@ export default function ModificarProyecto() {
             <Form.Control
               type="date"
               name="fecha_inicio"
-              className="w-75"
+              className="w-3/4"
               min={
                 formData.iteraciones.length > 0
                   ? new Date(
@@ -1048,7 +1056,7 @@ export default function ModificarProyecto() {
             />
             {errorIteracion.fecha_inicio ||
             errorIteracion.fechasSuperpuestas ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 {errorIteracion.fecha_inicio
                   ? "Revise que la fecha de inicio de la iteración no este vacía"
                   : errorIteracion.fechasSuperpuestas
@@ -1084,7 +1092,7 @@ export default function ModificarProyecto() {
                       .split("T")[0]
                   : null
               }
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.fecha_fin}
               onChange={handleChangeIteracion}
               isInvalid={
@@ -1092,7 +1100,7 @@ export default function ModificarProyecto() {
               }
             />
             {errorIteracion.fecha_fin || errorIteracion.fechasFinAntes ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 {errorIteracion.fecha_fin
                   ? "Revise que la fecha de finalización de la iteración no este vacía"
                   : errorIteracion.fechasFinAntes
@@ -1107,6 +1115,7 @@ export default function ModificarProyecto() {
 
       <ModalPersonalizado
         title={"Modificar Iteración"}
+        placement="top"
         show={modificarIteracion}
         setShow={setModificarIteracion}
         onConfirm={handleClickModificarIteracion}
@@ -1128,13 +1137,13 @@ export default function ModificarProyecto() {
               type="text"
               name="nombre"
               placeholder="Ingrese el nombre de la iteración"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.nombre}
               onChange={handleChangeIteracion}
               isInvalid={errorIteracion.nombre || errorIteracion.nombreIgual}
             />
             {errorIteracion.nombre || errorIteracion.nombreIgual ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formDataIteracion.nombre.length === 0
                   ? "no este vacío"
@@ -1152,7 +1161,7 @@ export default function ModificarProyecto() {
             <Form.Control
               type="date"
               name="fecha_inicio"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.fecha_inicio}
               onChange={handleChangeIteracion}
               isInvalid={
@@ -1181,7 +1190,7 @@ export default function ModificarProyecto() {
             {errorIteracion.fecha_inicio ||
             errorIteracion.fechasSuperpuestas ||
             errorIteracion.fecha_inicio_antes ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 {errorIteracion.fecha_inicio
                   ? "Revise que la fecha de inicio de la iteración no este vacía."
                   : errorIteracion.fechasSuperpuestas
@@ -1200,7 +1209,7 @@ export default function ModificarProyecto() {
             <Form.Control
               type="date"
               name="fecha_fin"
-              className="w-75"
+              className="w-3/4"
               value={formDataIteracion.fecha_fin}
               onChange={handleChangeIteracion}
               isInvalid={
@@ -1208,7 +1217,7 @@ export default function ModificarProyecto() {
               }
             />
             {errorIteracion.fecha_fin || errorIteracion.fechasFinAntes ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 {errorIteracion.fecha_fin
                   ? "Revise que la fecha de finalización de la iteración no este vacía"
                   : errorIteracion.fechasFinAntes
@@ -1223,6 +1232,7 @@ export default function ModificarProyecto() {
 
       <ModalPersonalizado
         title={"Modificar participante"}
+        placement="top"
         show={modificarParticipante}
         setShow={setModificarParticipante}
         onConfirm={handleClickModificarParticipante}
@@ -1243,7 +1253,7 @@ export default function ModificarProyecto() {
             <Form.Control
               type="text"
               disabled
-              className="w-75"
+              className="w-3/4"
               value={
                 formDataParticipante.nombre
                   ? formDataParticipante.nombre
@@ -1272,13 +1282,13 @@ export default function ModificarProyecto() {
               isInvalid={errorParticipante.rol}
             />
             {errorParticipante.rol && (
-              <Form.Text className="text-danger">Seleccione un rol.</Form.Text>
+              <Form.Text className="text-red-600">Seleccione un rol.</Form.Text>
             )}
           </Form.Group>
         </Form>
       </ModalPersonalizado>
 
-      <Modal show={seguro} onHide={handleSeguro}>
+      <Modal show={seguro} onHide={handleSeguro} placement="top">
         <Modal.Body>
           <>
             <h1>¿Está seguro?</h1>
@@ -1316,6 +1326,7 @@ export default function ModificarProyecto() {
 
       <Modal
         show={eliminarParticipante}
+        placement="top"
         onHide={() => {
           setEliminarParticipante(!eliminarParticipante);
         }}
@@ -1367,6 +1378,7 @@ export default function ModificarProyecto() {
 
       <Modal
         show={eliminarIteracion}
+        placement="top"
         onHide={() => {
           setEliminarIteracion(!eliminarIteracion);
         }}

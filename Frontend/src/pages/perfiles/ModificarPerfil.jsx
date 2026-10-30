@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import Footer from "./../../components/Footer";
 import Navegador from "../../components/Navegador";
-import { Alert, Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "@/components/ui";
 import { useLoaderData } from "react-router-dom";
 import {
   actualizarPerfil,
@@ -125,7 +125,7 @@ export default function ModificarPerfil() {
                 isInvalid={error.nombre || error.nombreIgual}
               />
               {(error.nombre || error.nombreIgual) && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que el nombre{" "}
                   {formData.nombre.length === 0
                     ? "no este vacio"
@@ -156,7 +156,7 @@ export default function ModificarPerfil() {
                 />
               ))}
               {error.permisos && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Seleccione al menos un permiso.
                 </Form.Text>
               )}

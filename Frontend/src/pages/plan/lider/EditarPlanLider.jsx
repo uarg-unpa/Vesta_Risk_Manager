@@ -11,7 +11,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
@@ -320,7 +320,7 @@ export default function EditarPlanLider() {
               ) : null}
             </Form.Select>
             {errorPrincipal.tipo && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Seleccione el tipo de plan.
               </Form.Text>
             )}
@@ -338,7 +338,7 @@ export default function EditarPlanLider() {
               isInvalid={errorPrincipal.descripcion}
             />
             {errorPrincipal.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la descripción no este vacía.
               </Form.Text>
             )}
@@ -352,7 +352,7 @@ export default function EditarPlanLider() {
               Agregar Tarea
             </Button>
             <Table size="sm" hover className="mt-2">
-              <thead className="table-info">
+              <thead className="bg-blue-50">
                 <tr className="th">
                   <th>Tarea</th>
                   <th>Responsable</th>
@@ -417,7 +417,7 @@ export default function EditarPlanLider() {
               </tbody>
             </Table>
             {errorPrincipal.tareas && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 El plan debe tener al menos una tarea.
               </Form.Text>
             )}
@@ -476,7 +476,7 @@ export default function EditarPlanLider() {
               isInvalid={errorTarea.nombre || errorTarea.nombre_igual}
             />
             {errorTarea.nombre || errorTarea.nombre_igual ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formDataTarea.nombre.length === 0
                   ? "no este vacío"
@@ -499,7 +499,7 @@ export default function EditarPlanLider() {
               isInvalid={errorTarea.descripcion}
             />
             {errorTarea.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la descripción no este vacía.
               </Form.Text>
             )}
@@ -520,7 +520,7 @@ export default function EditarPlanLider() {
             />
             {errorTarea.fecha_inicio ||
             errorTarea.fecha_inicio_antes_iteracion ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la fecha{" "}
                 {errorTarea.fecha_inicio
                   ? "no este vacía"
@@ -548,7 +548,7 @@ export default function EditarPlanLider() {
             {errorTarea.fecha_fin ||
             errorTarea.fecha_fin_antes ||
             errorTarea.fecha_fin_despues_iteracion ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la fecha{" "}
                 {errorTarea.fecha_fin
                   ? "no este vacía"
@@ -578,7 +578,7 @@ export default function EditarPlanLider() {
                 ))
               : null}
             {errorTarea.responsables && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Seleccione al menos un responsable.
               </Form.Text>
             )}
@@ -616,7 +616,7 @@ export default function EditarPlanLider() {
               isInvalid={errorTarea.nombre || errorTarea.nombre_igual}
             />
             {errorTarea.nombre || errorTarea.nombre_igual ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que el nombre{" "}
                 {formDataTarea.nombre.length === 0
                   ? "no este vacío"
@@ -639,7 +639,7 @@ export default function EditarPlanLider() {
               isInvalid={errorTarea.descripcion}
             />
             {errorTarea.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la descripción no este vacía.
               </Form.Text>
             )}
@@ -660,7 +660,7 @@ export default function EditarPlanLider() {
             />
             {errorTarea.fecha_inicio ||
             errorTarea.fecha_inicio_antes_iteracion ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la fecha{" "}
                 {errorTarea.fecha_inicio
                   ? "no este vacía"
@@ -688,7 +688,7 @@ export default function EditarPlanLider() {
             {errorTarea.fecha_fin ||
             errorTarea.fecha_fin_antes ||
             errorTarea.fecha_fin_despues_iteracion ? (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Revise que la fecha{" "}
                 {errorTarea.fecha_fin
                   ? "no este vacía"
@@ -729,7 +729,7 @@ export default function EditarPlanLider() {
                 ))
               : null}
             {errorTarea.responsables && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Seleccione al menos un responsable.
               </Form.Text>
             )}

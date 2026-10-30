@@ -8,7 +8,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import BotonSalir from "../../../components/BotonSalir";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

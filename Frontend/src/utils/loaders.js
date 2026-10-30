@@ -39,8 +39,18 @@ export async function cargarCategoria({ params }) {
 
 
 // Loaders de Proyectos
+export const normalizarProyecto = (proyecto = {}) => ({
+  ...proyecto,
+  nombre: proyecto.nombre ?? "",
+  descripcion: proyecto.descripcion ?? "",
+  estado: proyecto.estado ?? "activo",
+  participantes: Array.isArray(proyecto.participantes) ? proyecto.participantes : [],
+  iteraciones: Array.isArray(proyecto.iteraciones) ? proyecto.iteraciones : [],
+  categorias: Array.isArray(proyecto.categorias) ? proyecto.categorias : [],
+});
+
 export async function cargarProyecto({ params }) {
-  const proyecto = await obtenerProyectosId(params.id_proyecto);
+  const proyecto = normalizarProyecto(await obtenerProyectosId(params.id_proyecto));
   const iteracion = await obtenerIteracionActual(params.id_proyecto);
   return { proyecto, iteracion};
 }
@@ -68,7 +78,8 @@ export const dashboardLoader = async ({ params }) => {
   
   const datosRiesgos = await obtenerDatosRiesgos(params.id_proyecto);
   const iteracion = await obtenerIteracionActual(params.id_proyecto);
-  return {datosRiesgos, iteracion};
+  const proyecto = normalizarProyecto(await obtenerProyectosId(params.id_proyecto));
+  return {datosRiesgos, iteracion, proyecto};
 };
 
 export const riesgoLoader = async ({ params }) => {
@@ -81,13 +92,14 @@ export const riesgoLoader = async ({ params }) => {
 export const riesgoLoaderPage = async ({ params }) => {
   const {riesgos, totalPaginas} = await obtenerRiesgosProyectoPaginado(params.id_proyecto, localStorage.getItem("pagina_riesgo")??1, localStorage.getItem("orden_riesgo")??1);
   const iteracion = await obtenerIteracionActual(params.id_proyecto);
+  const proyecto = normalizarProyecto(await obtenerProyectosId(params.id_proyecto));
 
-  return { riesgos, totalPaginas, iteracion };
+  return { riesgos, totalPaginas, iteracion, proyecto };
 };
 
 export async function cargarRiesgo({ params }) {
   const id_riesgo= params.id_riesgo
-  const proyecto = await obtenerProyectosId(params.id_proyecto);
+  const proyecto = normalizarProyecto(await obtenerProyectosId(params.id_proyecto));
   const iteracion = await obtenerIteracionActual(params.id_proyecto);
   const riesgo = await obtenerRiesgoId(params.id_proyecto, id_riesgo);
   return { proyecto, riesgo, iteracion };
@@ -217,7 +229,7 @@ export async function verIncidenciaLoader({ params }) {
 // Loader de Iteraciones
 export const iteracionLoader = async ({ params }) => {
   const iteracion = await obtenerIteracionActual(params.id_proyecto);
-  return { iteracion };
+  const proyecto = normalizarProyecto(await obtenerProyectosId(params.id_proyecto));
+  const { iteraciones = [], totalPaginas = 1 } = await obtenerIteracionesPaginada(params.id_proyecto, 1);
+  return { iteracion, proyecto, iteraciones, totalPaginas };
 };
-
-

@@ -7,7 +7,7 @@ import {
 import NavegadorLider from "../../components/NavegadorLider";
 import Footer from "../../components/Footer";
 import Contenedor from "../../components/Contenedor";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -115,7 +115,7 @@ export default function EditarRiesgo() {
             <Form.Group>
               <Form.Label className="mb-0">Descripción</Form.Label>
               <br />
-              <Form.Text className="ms-2">
+              <Form.Text className="ml-2">
                 <b>Sugerencia</b>:{" "}
                 {
                   "Dada/s <una o más causas>, podría ocurrir <el riesgo>, lo que conduciría a <uno o más efectos>."
@@ -131,7 +131,7 @@ export default function EditarRiesgo() {
                 isInvalid={error.descripcion}
               />
               {error.descripcion && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que la descripción no este vacía.
                 </Form.Text>
               )}
@@ -156,7 +156,7 @@ export default function EditarRiesgo() {
                 ))}
               </Form.Select>
               {error.categoria && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Seleccione una categoría válida.
                 </Form.Text>
               )}
@@ -182,7 +182,7 @@ export default function EditarRiesgo() {
                 />
               ))}
               {error.responsables && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Seleccione al menos un responsable.
                 </Form.Text>
               )}

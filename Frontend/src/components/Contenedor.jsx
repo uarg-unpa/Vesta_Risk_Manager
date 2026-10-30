@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Card } from "react-bootstrap";
+import { Card, CardTitle, Container } from "@/components/ui";
 
 /**
  * Componente Contenedor
@@ -16,9 +16,15 @@ export default function Contenedor({ children }) {
   const [headerContent, bodyContent, footerContent] = children;
 
   return (
-    <Container className="pt-4 pb-5" style={{ minHeight: "75vh" }}>
+    <Container className="flex-1 pt-4 pb-5" style={{ minHeight: "75vh" }}>
       <Card>
-        <Card.Header>{headerContent}</Card.Header>
+        <Card.Header>
+          {React.isValidElement(headerContent) && headerContent.type === "h3" ? (
+            <CardTitle as="h3" size="page" className={headerContent.props.className}>
+              {headerContent.props.children}
+            </CardTitle>
+          ) : headerContent}
+        </Card.Header>
         <Card.Body>{bodyContent}</Card.Body>
         {footerContent && <Card.Footer>{footerContent}</Card.Footer>}
       </Card>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import Footer from "./../../components/Footer";
 import Navegador from "../../components/Navegador";
-import { Alert, Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "@/components/ui";
 import { useLoaderData } from "react-router-dom";
 import { crearPerfil, obtenerPerfilNombre } from "../../services/usuarios";
 import { useNavigate } from "react-router-dom";
@@ -110,7 +110,7 @@ export default function CrearPerfil() {
                 isInvalid={error.nombre || error.nombreIgual}
               />
               {(error.nombre || error.nombreIgual) && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que el nombre{" "}
                   {formData.nombre.length === 0
                     ? "no este vacio"
@@ -138,7 +138,7 @@ export default function CrearPerfil() {
                 />
               ))}
               {error.permisos && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Seleccione al menos un permiso.
                 </Form.Text>
               )}

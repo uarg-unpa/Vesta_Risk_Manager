@@ -1,6 +1,6 @@
 .gradient-border-bottom {
     position: relative;
-    padding-bottom: 10px; /* Espacio para el borde */
+    padding-bottom: 16px; /* Espacio inferior común del navbar */
   }
   
   .gradient-border-bottom::after {

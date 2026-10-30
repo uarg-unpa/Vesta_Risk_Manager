@@ -1,13 +1,13 @@
 import React from "react";
 import logoVesta from "../assets/img/Logo-VestaRiskManager2.png";
-import { Navbar, Container, Figure, Nav, NavDropdown } from "react-bootstrap";
+import { Navbar, Container, Figure, Nav, NavDropdown } from "@/components/ui";
 import "../styles/GradientBorderComponent.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
   faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useUsuario } from "../context/usuarioContext";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { URL_BASE } from "../utils/funciones";
@@ -23,51 +23,53 @@ import { URL_BASE } from "../utils/funciones";
 export default function NavegadorLider() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id_proyecto: idProyectoRuta } = useParams();
   const comprobacionLider = location.pathname.includes("lider");
 
   const { usuario } = useUsuario();
   const proyecto = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
+  const idProyecto = proyecto?.id_proyecto ?? idProyectoRuta;
   if (usuario.nombre_perfil === "Espectador" || usuario.nombre_perfil === "Administrador") {
     return (
     <Navbar
       expand="lg"
       bg="dark"
       variant="dark"
-      className="gradient-border-bottom"
+       className="gradient-border-bottom px-3"
     >
-      <Container className="d-flex align-items-center">
-        <Navbar.Brand href="/frontend/inicio" className="d-flex align-items-center">
-          <Figure.Image src={logoVesta} width={60} />
+      <Container className="flex items-center">
+        <Navbar.Brand href="/inicio" className="flex items-center">
+           <Figure.Image src={logoVesta} width={60} className="mr-2 self-center" />
           Vesta Risk Manager
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse>
-          <Nav className="me-auto" >
+          <Nav className="ml-auto" >
             <Nav.Link 
-              href={`${URL_BASE}/inicio/espectador/proyecto/${proyecto.id_proyecto}`}
+              href={`${URL_BASE}/inicio/espectador/proyecto/${idProyecto}`}
             >
               <FontAwesomeIcon icon={faHouse} className="mx-2" />
               Inicio
             </Nav.Link>
             <Nav.Link
-              href={`${URL_BASE}/inicio/proyecto/espectador/${proyecto.id_proyecto}/riesgos`}
+              href={`${URL_BASE}/inicio/proyecto/espectador/${idProyecto}/riesgos`}
             >
               Lista de Riesgos
             </Nav.Link>
             <Nav.Link
-              href={`${URL_BASE}/inicio/proyecto/espectador/${proyecto.id_proyecto}/monitoreo`}
+              href={`${URL_BASE}/inicio/proyecto/espectador/${idProyecto}/monitoreo`}
             >
               Monitoreo
             </Nav.Link>
 
             <Nav.Link
-              href={`${URL_BASE}/inicio/proyecto/espectador/${proyecto.id_proyecto}/ayuda`}
+              href={`${URL_BASE}/inicio/proyecto/espectador/${idProyecto}/ayuda`}
             >
               <FontAwesomeIcon icon={faCircleQuestion} className="mx-2" />
               Ayuda
             </Nav.Link>
 
-            <Nav.Link href={usuario.nombre_perfil == "Administrador" ? `${URL_BASE}/inicio/proyecto/${proyecto.id_proyecto}` : `${URL_BASE}/inicio/espectador/proyectos`}>
+            <Nav.Link href={usuario.nombre_perfil == "Administrador" ? `${URL_BASE}/inicio/proyecto/${idProyecto}` : `${URL_BASE}/inicio/espectador/proyectos`}>
               <FontAwesomeIcon
                 icon={faArrowRightFromBracket}
                 className="mx-2"
@@ -93,19 +95,19 @@ export default function NavegadorLider() {
         expand="lg"
         bg="dark"
         variant="dark"
-        className="gradient-border-bottom"
+       className="gradient-border-bottom px-3"
       >
-        <Container className="d-flex align-items-center">
-          <Navbar.Brand href={`${URL_BASE}/inicio`} className="d-flex align-items-center">
-            <Figure.Image src={logoVesta} width={60} />
+        <Container className="flex items-center">
+          <Navbar.Brand href={`${URL_BASE}/inicio`} className="flex items-center">
+             <Figure.Image src={logoVesta} width={60} className="mr-2 self-center" />
             Vesta Risk Manager
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse>
-            <Nav className="me-auto" >
+            <Nav className="ml-auto" >
               <Nav.Link 
               style={comprobacionLider ? {} : {display: "none"}}
-                href={`${URL_BASE}/inicio/proyecto/lider/${proyecto.id_proyecto}`}
+                href={`${URL_BASE}/inicio/proyecto/lider/${idProyecto}`}
               >
                 <FontAwesomeIcon icon={faHouse} className="mx-2" />
                 Inicio
@@ -113,20 +115,20 @@ export default function NavegadorLider() {
               <Nav.Link
                 href={`${URL_BASE}/inicio/proyecto/${
                   comprobacionLider ? "lider" : "desarrollador"
-                }/${proyecto.id_proyecto}/riesgos`}
+                }/${idProyecto}/riesgos`}
               >
                 Lista de Riesgos
               </Nav.Link>
               <Nav.Link
                 href={`${URL_BASE}/inicio/proyecto/${
                   comprobacionLider ? "lider" : "desarrollador"
-                }/${proyecto.id_proyecto}/monitoreo`}
+                }/${idProyecto}/monitoreo`}
               >
                 Monitoreo
               </Nav.Link>
               <Nav.Link 
               style={comprobacionLider ? {} : {display: "none"}}
-                href={`${URL_BASE}/inicio/proyecto/lider/${proyecto.id_proyecto}/iteraciones`}
+                href={`${URL_BASE}/inicio/proyecto/lider/${idProyecto}/iteraciones`}
               >
                 Iteraciones
               </Nav.Link>
@@ -134,7 +136,7 @@ export default function NavegadorLider() {
               <Nav.Link
               href={`${URL_BASE}/inicio/proyecto/${
                   comprobacionLider ? "lider" : "desarrollador"
-                }/${proyecto.id_proyecto}/ayuda`}
+                }/${idProyecto}/ayuda`}
             >
               <FontAwesomeIcon icon={faCircleQuestion} className="mx-1" />
               Ayuda

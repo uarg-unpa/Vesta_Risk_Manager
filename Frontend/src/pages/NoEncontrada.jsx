@@ -1,7 +1,7 @@
 import React from "react";
 import Navegador from "../components/Navegador";
 import LogoVesta from "./../assets/img/Logo-VestaRiskManager1.png";
-import { Figure } from "react-bootstrap";
+import { Figure } from "@/components/ui";
 import { URL_BASE } from "../utils/funciones";
 
 export default function NoEncontrada() {
@@ -10,7 +10,7 @@ export default function NoEncontrada() {
       <Navegador />
       <div
         style={{ height: "70vh" }}
-        className="d-flex justify-content-center align-items-center flex-column"
+        className="flex justify-center items-center flex-col"
       >
         <Figure.Image src={LogoVesta} style={{ height: "200px" }} />
         <h3>Página no encontrada</h3>

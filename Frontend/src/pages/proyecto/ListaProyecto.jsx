@@ -4,7 +4,7 @@ import Footer from "../../components/Footer";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import Contenedor from "../../components/Contenedor";
 import "./../../styles/Home.css";
-import { Alert, Button, Dropdown, DropdownButton, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Alert, Button, Dropdown, DropdownButton, OverlayTrigger, ProjectRow, Tooltip } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
@@ -52,14 +52,14 @@ export default function ListaProyecto() {
     <>
       <Navegador />
       {mensaje ? (
-        <Alert variant="success" className="text-center fs-4">
+        <Alert variant="success" className="text-center text-xl">
           {mensaje}
         </Alert>
       ) : null}
       <Contenedor>
         <h3>Proyectos</h3>
         <div style={{ minHeight: "40vh" }}>
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="flex justify-between items-center mb-3">
 {
             !comprobacionEspectador && (
               <Button
@@ -99,19 +99,19 @@ export default function ListaProyecto() {
           
           {proyectosCargados && proyectosCargados.length > 0 ? (
             proyectosCargados.map((item, key) => (
-              <div
+              <ProjectRow
                 key={key}
-                className={`w-100 rounded px-2 text-white d-flex justify-content-between align-items-center py-3 mb-2 ${item.estado == "activo" ? "boton_proyecto": item.estado == "inactivo"? "boton_proyecto_inactivo": item.estado == "finalizado" ? "boton_proyecto_finalizado": "boton_proyecto_abandonado"}`}
+                className={`${item.estado == "activo" ? "boton_proyecto": item.estado == "inactivo"? "boton_proyecto_inactivo": item.estado == "finalizado" ? "boton_proyecto_finalizado": "boton_proyecto_abandonado"}`}
             >
               {item.nombre}
-              <div className="w-25 d-flex justify-content-end gap-1 align-items-center">
+              <div className="w-1/4 flex justify-end gap-1 items-center">
                 <OverlayTrigger
                       placement="top"
                       overlay={<Tooltip id="tooltip-edit">{comprobacionEspectador ? "Espectear" : "Ver"}</Tooltip>}
                     >
                 <FontAwesomeIcon
                   icon={faSearch}
-                  className="fw-bold fs-3 me-2 icono"
+                  className="font-bold text-2xl mr-2 icono"
                   onClick={async() => {
                     const proyecto = await obtenerProyectosId(item.id_proyecto);
                     localStorage.setItem(
@@ -130,7 +130,7 @@ export default function ListaProyecto() {
                   >
                     <FontAwesomeIcon
                       icon={faPenToSquare}
-                      className="fw-bold fs-3 me-2 icono"
+                      className="font-bold text-2xl mr-2 icono"
                       onClick={() => {
                         navigate(`/inicio/proyecto/modificar/${item.id_proyecto}`);
                       }}
@@ -140,10 +140,10 @@ export default function ListaProyecto() {
                 }
                 
               </div>
-            </div>
+            </ProjectRow>
           ))
           ) : (
-            <p className="text-center fw-bold">No posee proyectos en esta categoria</p>
+            <p className="text-center font-bold">No posee proyectos en esta categoria</p>
           )}
           <Paginado
             paginaActual={paginaActual}

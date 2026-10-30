@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navegador from "../../../components/Navegador";
 import Footer from "../../../components/Footer";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import Contenedor from "../../../components/Contenedor";
 import "./../../../styles/Home.css";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, ProjectRow, Tooltip } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   obtenerProyectosId,
@@ -23,14 +23,22 @@ export default function ListaProyectoDesarrollador() {
   const {usuario} = useUsuario();
 
   const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginasCargadas, setTotalPaginasCargadas] = useState(totalPaginas);
   const [proyectosCargados, setProyectosCargados] = useState(proyectos);
 
   useEffect(() => {
       obtenerProyectosUsuarioDesarrolladorPaginado(usuario.email, paginaActual).then(
-        ({proyectos, _}) => {
+        ({proyectos, totalPaginas: paginas}) => {
           setProyectosCargados(proyectos);
+          setTotalPaginasCargadas(paginas);
       });
-    }, [paginaActual]);
+    }, [paginaActual, usuario.email]);
+
+  const ingresarAlProyecto = async (idProyecto) => {
+    const proyecto = await obtenerProyectosId(idProyecto);
+    localStorage.setItem("proyecto_seleccionado", JSON.stringify(proyecto));
+    navigate(`/inicio/proyecto/desarrollador/${idProyecto}/riesgos`);
+  };
 
   useEffect(() => {
     localStorage.removeItem("pagina_riesgo")
@@ -46,9 +54,9 @@ export default function ListaProyectoDesarrollador() {
         <div style={{ minHeight: "40vh" }}>
           {proyectosCargados && proyectosCargados.length > 0 ? (
             proyectosCargados.map((item, key) => (
-              <Button
+              <ProjectRow
                 key={key}
-                className="w-100 d-flex justify-content-between align-items-center py-3 mb-2 boton_proyecto"
+                className="boton_proyecto"
             >
               {item.nombre}
               <OverlayTrigger
@@ -57,28 +65,20 @@ export default function ListaProyectoDesarrollador() {
                 >
                   <FontAwesomeIcon
                     icon={faSearch}
-                    className="fw-bold fs-3 me-2 icono"
-                    onClick={async () => {
-                      const proyecto = await obtenerProyectosId(item.id_proyecto);
-                      localStorage.setItem(
-                        "proyecto_seleccionado",
-                        JSON.stringify(proyecto)
-                      );
-                      navigate(
-                        `/inicio/proyecto/desarrollador/${item.id_proyecto}/riesgos`
-                      );
-                    }}
+                    className="font-bold text-2xl mr-2 icono"
+                    aria-hidden="true"
+                    onClick={() => ingresarAlProyecto(item.id_proyecto)}
                 />
                 
               </OverlayTrigger>
-            </Button>
+            </ProjectRow>
             ))
           ) : (
-            <p className="text-center fw-bold">No posee proyectos asignados</p>
+            <p className="text-center font-bold">No posee proyectos asignados</p>
           )}
           <Paginado
             paginaActual={paginaActual}
-            totalPaginas={totalPaginas}
+            totalPaginas={totalPaginasCargadas}
             setPaginaActual={setPaginaActual}
           />
           <BotonSalir ruta={"/inicio"} />

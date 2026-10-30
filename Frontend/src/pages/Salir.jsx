@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Navegador from "../components/Navegador";
 import Footer from "../components/Footer";
 import Contenedor from "../components/Contenedor";
-import { Alert, Button, Card } from "react-bootstrap";
+import { Alert, Button, Card } from "@/components/ui";
 import { useNavigate } from "react-router-dom";
 
 export default function Salir() {

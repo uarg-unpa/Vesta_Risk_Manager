@@ -3,7 +3,7 @@ import Navegador from "../../components/Navegador";
 import Footer from "../../components/Footer";
 import Contenedor from "../../components/Contenedor";
 import { useLoaderData, useLocation } from "react-router-dom";
-import { Table, Button, Alert, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Table, Button, Alert, Modal, OverlayTrigger, Tooltip } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -55,7 +55,7 @@ export default function ListaUsuarios() {
     <>
       <Navegador />
       {mensaje ? (
-                    <Alert variant="success" className="text-center fs-4">
+                    <Alert variant="success" className="text-center text-xl">
                       {mensaje}
                     </Alert>
                   ) : null}
@@ -72,10 +72,10 @@ export default function ListaUsuarios() {
             Nuevo usuario
           </Button>
           <Table size="sm" hover className="mt-2">
-            <thead className="table-info">
+            <thead className="bg-[#cff4fc]">
               <tr>
-                <th>Usuarios</th>
-                <th>Opciones</th>
+                <th className="text-center">Usuarios</th>
+                <th className="text-center" style={{ minWidth: "12em" }}>Opciones</th>
               </tr>
             </thead>
             <tbody>
@@ -86,7 +86,7 @@ export default function ListaUsuarios() {
                     <br />
                     {item.email}
                   </td>
-                  <td>
+                  <td style={{ minWidth: "12em", textAlign: "center" }}>
                     <OverlayTrigger
                       placement="top"
                       overlay={<Tooltip id="tooltip-edit">Ver</Tooltip>}

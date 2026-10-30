@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import Footer from "../../components/Footer";
 import Navegador from "../../components/Navegador";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form } from "@/components/ui";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -88,7 +88,7 @@ export default function CrearCategoria() {
                 isInvalid={error.nombre || error.nombreIgual}
               />
               {(error.nombre || error.nombreIgual) && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que el nombre{" "}
                   {formData.nombre.length === 0
                     ? "no este vacío"
@@ -112,7 +112,7 @@ export default function CrearCategoria() {
                 isInvalid={error.descripcion || error.descripcionIgual}
               />
               {(error.descripcion || error.descripcionIgual) && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que la descripción{" "}
                   {formData.descripcion.length === 0
                     ? "no este vacio"

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavegadorLider from "../../../components/NavegadorLider";
 import Footer from "../../../components/Footer";
 import Contenedor from "../../../components/Contenedor";
-import { Alert, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import { Alert, Button, OverlayTrigger, Table, Tooltip } from "@/components/ui";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -125,7 +125,7 @@ export default function VerPlanesPasados() {
                   ))
                 :
                 <tr>
-                    <td colSpan="5" className="text-center fs-5">
+                    <td colSpan="5" className="text-center text-lg">
                       No hay planes de riesgo registrados.
                     </td>
                   </tr> 

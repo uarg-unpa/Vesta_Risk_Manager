@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import Footer from "./../../components/Footer";
 import Navegador from "../../components/Navegador";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form } from "@/components/ui";
 import { useLoaderData } from "react-router-dom";
 import {
   actualizarUsuario,
@@ -113,7 +113,7 @@ export default function ModificarUsuario() {
                 isInvalid={error.nombre || error.nombreIgual}
               />
               {(error.nombre || error.nombreIgual) && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que el nombre{" "}
                   {formData.nombre.length === 0
                     ? "no este vacio"
@@ -138,7 +138,7 @@ export default function ModificarUsuario() {
                 isInvalid={error.correo || error.correoIgual}
               />
               {(error.correo || error.correoIgual) && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Revise que el correo{" "}
                   {formData.correo.length === 0
                     ? "no este vacio"
@@ -155,7 +155,7 @@ export default function ModificarUsuario() {
             </Form.Group>
             <hr />
             <h4>Perfiles</h4>
-            <Form.Group>
+            <Form.Group className="flex flex-col items-start gap-2">
               {perfiles.map((item, key) => (
                 <Form.Check
                   key={key}

@@ -8,7 +8,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faSearch} from "@fortawesome/free-solid-svg-icons";
@@ -64,7 +64,7 @@ export default function VerEvaluacionesActuLider() {
         </Alert>
       ) : null}
       {mensaje ? (
-        <Alert variant="success" className="text-center fs-4">
+        <Alert variant="success" className="text-center text-xl">
           {mensaje}
         </Alert>
       ) : null}

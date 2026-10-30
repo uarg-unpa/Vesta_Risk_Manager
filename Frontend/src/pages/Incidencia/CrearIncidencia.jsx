@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Row, Col, Card, Table, Pagination, InputGroup } from "react-bootstrap";
+import { Button, Form, Row, Col, Card, Table, Pagination, InputGroup } from "@/components/ui";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -177,7 +177,7 @@ const handleRiesgoSelection = (id_riesgo) => {
               isInvalid={error.descripcion}
             />
             {error.descripcion && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 La descripción no puede estar vacía.
               </Form.Text>
             )}
@@ -193,7 +193,7 @@ const handleRiesgoSelection = (id_riesgo) => {
                   onClick={() => handleSeveritySelect("Baja")}
                   style={{ cursor: 'pointer' }}
                 >
-                  <Card.Body className={`text-center text-success`}>
+                  <Card.Body className={`text-center text-emerald-600`}>
                     <Card.Title>Baja</Card.Title>
                   </Card.Body>
                 </Card>
@@ -206,7 +206,7 @@ const handleRiesgoSelection = (id_riesgo) => {
                   onClick={() => handleSeveritySelect("Media")}
                   style={{ cursor: 'pointer' }}
                 >
-                  <Card.Body className={`text-center text-warning`}>
+                  <Card.Body className={`text-center text-amber-600`}>
                     <Card.Title>Media</Card.Title>
                   </Card.Body>
                 </Card>
@@ -219,14 +219,14 @@ const handleRiesgoSelection = (id_riesgo) => {
                   onClick={() => handleSeveritySelect("Alta")}
                   style={{ cursor: 'pointer' }}
                 >
-                  <Card.Body className={`text-center text-danger`}>
+                  <Card.Body className={`text-center text-red-600`}>
                     <Card.Title>Alta</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
             </Row>
             {error.gravedad && (
-              <Form.Text className="text-danger">
+              <Form.Text className="text-red-600">
                 Debe seleccionar un nivel de gravedad.
               </Form.Text>
             )}
@@ -246,21 +246,21 @@ const handleRiesgoSelection = (id_riesgo) => {
           </InputGroup>
 
           {error.riesgo && (
-            <Form.Text className="text-danger">
+            <Form.Text className="text-red-600">
               Debe seleccionar un riesgo.
             </Form.Text>
           )}
 
           <Card className="mb-3">
-            <Card.Header className="d-flex justify-content-between align-items-center">
+            <Card.Header className="flex justify-between items-center">
               <div>Riesgos disponibles</div>
-              <div className="badge bg-primary">
+              <div className="inline-flex rounded bg-blue-600 px-2 py-1 text-xs font-semibold text-white">
                 {formData.riesgo ? "1 seleccionado" : "0 seleccionados"}
               </div>
             </Card.Header>
             <Card.Body>
               {riesgosFiltrados.map(riesgo => (
-                <div key={riesgo.id_riesgo} className="mb-2 d-flex justify-content-between align-items-center">
+                <div key={riesgo.id_riesgo} className="mb-2 flex justify-between items-center">
                   <div>
                     <Form.Check
                       type="radio"
@@ -273,7 +273,7 @@ const handleRiesgoSelection = (id_riesgo) => {
                 </div>
               ))}
               {riesgosFiltrados.length === 0 && (
-                <div className="text-center text-muted">
+                <div className="text-center text-slate-500">
                   No se encontraron riesgos
                 </div>
               )}

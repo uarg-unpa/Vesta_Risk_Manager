@@ -1,9 +1,8 @@
 .cabecera {
-    --bs-table-color: #fff;
-    --bs-table-bg: transparent;
     background: rgb(53,127,217) !important;
     background: linear-gradient(90deg, rgba(53,127,217,1) 0%, rgba(220,49,50,1) 100%) !important;
-    --bs-table-border-color: #747474;
+    color: #fff;
+    border-color: #747474;
 }
 
 .td, .th{

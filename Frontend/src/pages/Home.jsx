@@ -3,7 +3,7 @@ import Navegador from "../components/Navegador";
 import Footer from "../components/Footer";
 import Contenedor from "../components/Contenedor";
 import { useUsuario } from "../context/usuarioContext";
-import { Button } from "react-bootstrap";
+import { Button } from "@/components/ui";
 import "./../styles/Home.css";
 import { useNavigate } from "react-router-dom";
 export default function Home() {
@@ -22,7 +22,7 @@ export default function Home() {
               siguientes opciones:
             </p>
             <Button
-              className="px-4 py-3 me-2 boton_1"
+              className="px-4 py-3 mr-2 boton_1"
               onClick={() => {
                 navigate(usuario.nombre_perfil === "Espectador"? "/inicio/espectador/proyectos" : "/inicio/proyectos");
               }}
@@ -32,7 +32,7 @@ export default function Home() {
             {
               usuario.nombre_perfil === "Administrador" && (
                 <Button
-                  className="px-4 py-3 me-2 boton_2"
+                  className="px-4 py-3 mr-2 boton_2"
                   onClick={() => {
                     navigate("/inicio/categorias");
                   }}
@@ -50,7 +50,7 @@ export default function Home() {
               visualizar su proyecto:
             </p>
             <Button
-              className="px-4 py-3 me-2 boton_1"
+              className="px-4 py-3 mr-2 boton_1"
               onClick={() => {
                 navigate("/inicio/proyectos/lider");
               }}
@@ -58,7 +58,7 @@ export default function Home() {
               Proyectos de Líder
             </Button>
             <Button
-              className="px-4 py-3 me-2 boton_2"
+              className="px-4 py-3 mr-2 boton_2"
               onClick={() => {
                 navigate("/inicio/proyectos/desarrollador");
               }}

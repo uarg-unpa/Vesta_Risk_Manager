@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import NavegadorLider from '../../components/NavegadorLider'
 import Footer from '../../components/Footer'
-import { Alert, Button, Card, Col, Container, Row, Table } from 'react-bootstrap'
+import { Alert, Button, Card, CardTitle, Col, Container, Row, Table } from "@/components/ui"
 import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { useLoaderData } from 'react-router-dom'
@@ -52,9 +52,9 @@ export default function SeguimientoRiesgo() {
                 <Col xs={6}>
                     <Card>
                         <Card.Header>
-                            Resúmen de Estado
+                            <CardTitle>Resúmen de Estado</CardTitle>
                         </Card.Header>
-                        <Card.Body className='d-flex justify-content-center'>
+                        <Card.Body className='flex justify-center'>
                             {estado && estado.some(p => p > 0)  ? (
                                 <Pie 
                                 ref={resumen_estado}
@@ -79,7 +79,7 @@ export default function SeguimientoRiesgo() {
                             width={400}
                                 />
                             ) : (
-                                <p className="text-center fw-bold">No se han registrado riesgos</p>
+                                <p className="text-center font-bold">No se han registrado riesgos</p>
                             )}
                         </Card.Body>
                     </Card>
@@ -87,9 +87,9 @@ export default function SeguimientoRiesgo() {
                 <Col xs={6}>
                     <Card>
                         <Card.Header>
-                            Resúmen de Prioridad
+                            <CardTitle>Resúmen de Prioridad</CardTitle>
                         </Card.Header>
-                        <Card.Body className='d-flex justify-content-center'>
+                        <Card.Body className='flex justify-center'>
                             {prioridad && prioridad.some(p => p > 0) ? (
                                 <Pie 
                                 ref={resumen_prioridad}
@@ -114,7 +114,7 @@ export default function SeguimientoRiesgo() {
                             width={400}
                             />
                             ) : (
-                                <p className="text-center fw-bold">No se han registrado riesgos</p>
+                                <p className="text-center font-bold">No se han registrado riesgos</p>
                             )}
                         </Card.Body>
                     </Card>

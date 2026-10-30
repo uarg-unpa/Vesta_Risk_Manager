@@ -9,7 +9,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -108,7 +108,7 @@ export default function ListaTareaDesarrollador() {
                             setCompletar(true)
                             setTareaSeleccionada(tarea.id_tarea)
                           }}
-                          className={tarea.estado == '1' ? "d-none":""}
+                          className={tarea.estado == '1' ? "hidden":""}
                         >
                           <FontAwesomeIcon icon={faCheck} />
                         </Button>
@@ -136,7 +136,7 @@ export default function ListaTareaDesarrollador() {
                 </tr>
               )) : 
               <tr>
-                <td colSpan="6" className="text-center fs-5">
+                <td colSpan="6" className="text-center text-lg">
                   No hay tareas registradas.
                 </td>
               </tr>

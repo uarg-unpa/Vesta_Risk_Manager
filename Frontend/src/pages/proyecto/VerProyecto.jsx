@@ -5,12 +5,18 @@ import Contenedor from "../../components/Contenedor";
 import BotonSalir from "../../components/BotonSalir";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { formatearFecha } from "../../utils/funciones";
-import { Button, Dropdown, DropdownButton } from "react-bootstrap";
+import { Button, Dropdown, DropdownButton } from "@/components/ui";
 import { abandonarProyecto, activarProyecto, finalizarProyecto, inactivarProyecto } from "../../services/proyectos";
 
 export default function VerProyecto() {
   const navigate = useNavigate();
-  const { proyecto } = useLoaderData();
+  const { proyecto: proyectoLoader = {} } = useLoaderData();
+  const proyecto = {
+    ...proyectoLoader,
+    participantes: proyectoLoader.participantes ?? [],
+    iteraciones: proyectoLoader.iteraciones ?? [],
+    categorias: proyectoLoader.categorias ?? [],
+  };
 
   return (
     <>
@@ -25,7 +31,9 @@ export default function VerProyecto() {
           <p>{proyecto.descripcion}</p>
           <h4>Estado</h4>
           <p>
-            {proyecto.estado.charAt(0).toUpperCase() + proyecto.estado.slice(1)}
+            {proyecto.estado
+              ? proyecto.estado.charAt(0).toUpperCase() + proyecto.estado.slice(1)
+              : "Sin estado"}
           </p>
           <h4>Duración</h4>
           <p>
@@ -38,7 +46,7 @@ export default function VerProyecto() {
               : "No posee fecha de finalización"}{" "}
           </p>
           <h4>Iteraciones</h4>
-          <ul>
+          <ul className="mb-4 list-disc pl-8">
             {proyecto.iteraciones.map((item, key) => (
               <li key={key}>
                 {item.nombre} <br />{" "}
@@ -51,7 +59,7 @@ export default function VerProyecto() {
           </ul>
 
           <h4>Participantes</h4>
-          <ul>
+          <ul className="mb-4 list-disc pl-8">
             {proyecto.participantes.map((item, key) => (
               <li key={key}>
                 {item.nombre} - {item.email} <br /> <b>{item.rol}</b>
@@ -60,13 +68,15 @@ export default function VerProyecto() {
           </ul>
           <h4>Categorías</h4>
 
-          {proyecto.categorias.map((item, key) => (
-            <p key={key}>{item.nombre}</p>
-          ))}
+          <ul className="mb-4 list-disc pl-8">
+            {proyecto.categorias.map((item, key) => (
+              <li key={key}>{item.nombre}</li>
+            ))}
+          </ul>
           <hr />
           <h5>Opciones</h5>
         </div>
-        <div className="d-flex justify-content-start align-items-center">
+        <div className="flex justify-start items-center">
 
           <BotonSalir ruta={"/inicio/proyectos"} />
           <Button className="m-1" onClick={()=>{

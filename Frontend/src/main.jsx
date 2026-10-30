@@ -2,9 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { installDemoApi } from "./services/demoApi";
 
 import Index from "./pages/Index.jsx";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/tailwind.css";
 import Home from "./pages/Home.jsx";
 import ListaUsuarios from "./pages/usuarios/ListaUsuarios.jsx";
 import CrearUsuario from "./pages/usuarios/CrearUsuario.jsx";
@@ -106,6 +107,9 @@ import VerIncidencia from "./pages/Incidencia/VerIncidencia.jsx";
 import ListaIncidenciaDesarrollador from "./pages/Incidencia/desarrollador/ListaIncidenciaDesarrollador.jsx";
 import ListaTareaDesarrollador from "./pages/tarea/desarrollador/ListaTareaDesarrollador.jsx";
 import ListaIteraciones from "./pages/iteracion/ListaIteraciones.jsx";
+
+installDemoApi();
+
 const App = () => {
   const routerDesarrollador = [
     {
@@ -503,7 +507,7 @@ const App = () => {
       element: <NoEncontrada />,
     },
   ], {
-    basename: "/frontend"
+    basename: "/"
   });
 
   return <RouterProvider router={router}></RouterProvider>;

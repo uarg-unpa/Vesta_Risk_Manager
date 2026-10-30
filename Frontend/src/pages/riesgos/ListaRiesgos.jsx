@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import NavegadorLider from "../../components/NavegadorLider";
 import Footer from "../../components/Footer";
@@ -12,7 +12,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
@@ -41,14 +41,23 @@ import { formatearFecha } from "../../utils/funciones";
 import Paginado from "../../components/Paginado";
 import { useUsuario } from "../../context/usuarioContext";
 
+const normalizarRiesgos = (lista = []) => lista.map((riesgo) => ({
+  ...riesgo,
+  planes_realizado: riesgo.planes_realizado ?? {
+    total_minimizacion: 0,
+    total_mitigacion: 0,
+    total_contingencia: 0,
+  },
+}));
+
 export default function ListaRiesgos() {
   const { id_proyecto } = useParams();
-  const { riesgos, totalPaginas, iteracion } = useLoaderData();
+  const { riesgos, totalPaginas, iteracion, proyecto: proyectoLoader } = useLoaderData();
   
   const [eliminar, setEliminar] = useState(false)
   const [riesgoSeleccionado, setRiesgoSeleccionado] = useState(0)
 
-  const [riesgosCargados, setRiesgosCargados] = useState(riesgos)
+  const [riesgosCargados, setRiesgosCargados] = useState(normalizarRiesgos(riesgos))
   
   const [paginaActual, setPaginaActual] = useState(localStorage.getItem("pagina_riesgo")??1)
 
@@ -58,7 +67,8 @@ export default function ListaRiesgos() {
 
   const navigate = useNavigate();
   const comprobacionLider = location.pathname.includes("lider");
-  const proyecto = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
+  const proyectoGuardado = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
+  const proyecto = proyectoLoader ?? proyectoGuardado ?? { id_proyecto, nombre: "Proyecto" };
   const [confirmarEdicion, setConfirmarEdicion] = useState({
     confirmar: false,
     riesgo: null,
@@ -67,12 +77,12 @@ export default function ListaRiesgos() {
   const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
-    obtenerRiesgosProyectoPaginado(proyecto.id_proyecto, paginaActual, orden).then((data)=>{
-      const {riesgos, _} = data;
-      setRiesgosCargados(riesgos)
+    obtenerRiesgosProyectoPaginado(id_proyecto, paginaActual, orden).then((data)=>{
+      const {riesgos: riesgosPagina = []} = data;
+      setRiesgosCargados(normalizarRiesgos(riesgosPagina))
     })
     
-  }, [paginaActual, orden])
+  }, [id_proyecto, paginaActual, orden])
   
 
   useEffect(() => {
@@ -108,7 +118,7 @@ export default function ListaRiesgos() {
         </Alert>
       ) : null}
       {mensaje ? (
-        <Alert variant="success" className="text-center fs-4">
+        <Alert variant="success" className="text-center text-xl">
           {mensaje}
         </Alert>
       ) : null}
@@ -128,7 +138,7 @@ export default function ListaRiesgos() {
           ) : null}
         </>
         <>
-        <div className="d-flex justify-content-between">
+        <div className="flex justify-between">
           <Button
             variant="success"
             onClick={() => {
@@ -266,9 +276,9 @@ export default function ListaRiesgos() {
                           />
                         </OverlayTrigger>
                       )
-                    ) : riesgo.planes_realizado.total_contingencia == 0 ||
-                      (riesgo.planes_realizado.total_minimizacion == 0 &&
-                        riesgo.planes_realizado.total_mitigacion == 0) ? (
+                    ) : riesgo.planes_realizado?.total_contingencia == 0 ||
+                      (riesgo.planes_realizado?.total_minimizacion == 0 &&
+                        riesgo.planes_realizado?.total_mitigacion == 0) ? (
                       <OverlayTrigger
                         placement="top"
                         overlay={
@@ -328,7 +338,7 @@ export default function ListaRiesgos() {
                     {
                       comprobacionLider || comprobacionEspectador ? (
                         <>
-                        <div className={`${comprobacionLider || comprobacionEspectador ? "" : "d-none"}`}>
+                        <div className={`${comprobacionLider || comprobacionEspectador ? "" : "hidden"}`}>
                           <OverlayTrigger
                             placement="top"
                             overlay={<Tooltip id="tooltip-edit">Editar</Tooltip>}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavegadorLider from "../../../components/NavegadorLider";
 import Footer from "../../../components/Footer";
 import Contenedor from "../../../components/Contenedor";
-import { Alert, Button, Modal, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import { Alert, Button, Modal, OverlayTrigger, Table, Tooltip } from "@/components/ui";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faPenToSquare, faSearch, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -64,7 +64,7 @@ export default function VerPlanesActuales() {
         </Alert>
       ) : null}
       {mensaje ? (
-        <Alert variant="success" className="text-center fs-4">
+        <Alert variant="success" className="text-center text-xl">
           {mensaje}
         </Alert>
       ) : null}
@@ -186,7 +186,7 @@ export default function VerPlanesActuales() {
                   ))
                 : 
                   <tr>
-                    <td colSpan="5" className="text-center fs-5">
+                    <td colSpan="5" className="text-center text-lg">
                       No hay planes de riesgo registrados.
                     </td>
                   </tr>

@@ -3,7 +3,7 @@ import NavegadorLider from "../../../components/NavegadorLider";
 import Footer from "../../../components/Footer";
 import Contenedor from "../../../components/Contenedor";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { crearEvaluacion } from "../../../services/evaluacion";
@@ -146,7 +146,7 @@ export default function CrearEvaluacionDesarrollador() {
                 <option value={10}>10 - Alto</option>
               </Form.Select>
               {error.impacto && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Seleccione el impacto del riesgo.
                 </Form.Text>
               )}
@@ -175,7 +175,7 @@ export default function CrearEvaluacionDesarrollador() {
                 <option value={10}>90% ~ 100%</option>
               </Form.Select>
               {error.probabilidad && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Seleccione la probabilidad del riesgo.
                 </Form.Text>
               )}
@@ -193,7 +193,7 @@ export default function CrearEvaluacionDesarrollador() {
                 isInvalid={error.descripcion}
               />
               {error.descripcion && (
-                <Form.Text className="text-danger">
+                <Form.Text className="text-red-600">
                   Justifique la elección del impacto y la probabilidad del
                   riesgo.
                 </Form.Text>

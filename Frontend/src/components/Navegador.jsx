@@ -1,6 +1,6 @@
 import React from "react";
 import logoVesta from "../assets/img/Logo-VestaRiskManager2.png";
-import { Navbar, Container, Figure, Nav, NavDropdown } from "react-bootstrap";
+import { Navbar, Container, Figure, Nav, NavDropdown } from "@/components/ui";
 import "../styles/GradientBorderComponent.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -33,14 +33,14 @@ export default function Navegador() {
         variant="dark"
         className="gradient-border-bottom"
       >
-        <Container className="d-flex align-items-center">
-          <Navbar.Brand href={`${URL_BASE}/inicio`} className="d-flex align-items-center">
-            <Figure.Image src={logoVesta} width={60} />
+        <Container className="flex items-center">
+          <Navbar.Brand href={`${URL_BASE}/inicio`} className="flex items-center">
+            <Figure.Image src={logoVesta} width={60} className="mr-2 self-center" />
             Vesta Risk Manager
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse>
-            <Nav className="me-auto">
+            <Nav className="ml-auto">
               <Nav.Link href={`${URL_BASE}/inicio`}>
                 <FontAwesomeIcon icon={faHouse} className="mx-2" />
                 Inicio
@@ -49,13 +49,14 @@ export default function Navegador() {
                 title="Administrar acceso"
                 id="basic-nav-dropdown"
                 menuVariant="dark"
-                className={usuario.nombre_perfil == "Administrador" ? "" : "d-none"}
+                menuClassName="!border-white/15 !bg-[#212529]"
+                className={usuario.nombre_perfil == "Administrador" ? "border-0 bg-transparent px-4 py-2 text-base text-white/55 hover:border-0 hover:bg-transparent hover:text-white" : "hidden"}
               >
-                <NavDropdown.Item href={`${URL_BASE}/inicio/usuarios`}>
+                <NavDropdown.Item className="!text-white hover:!bg-white/10 hover:!text-white" href={`${URL_BASE}/inicio/usuarios`}>
                   <FontAwesomeIcon icon={faUser} className="mx-2" />
                   Usuarios
                 </NavDropdown.Item>
-                <NavDropdown.Item href={`${URL_BASE}/inicio/perfiles`}>
+                <NavDropdown.Item className="!text-white hover:!bg-white/10 hover:!text-white" href={`${URL_BASE}/inicio/perfiles`}>
                   <FontAwesomeIcon icon={faUserGear} className="mx-2" />
                   Perfiles
                 </NavDropdown.Item>
@@ -80,9 +81,9 @@ export default function Navegador() {
         variant="dark"
         className="gradient-border-bottom"
       >
-        <Container>
-          <Navbar.Brand href={`${URL_BASE}/`} className="d-flex align-items-center">
-            <Figure.Image src={logoVesta} width={100} />
+          <Container className="flex items-center">
+          <Navbar.Brand href={`${URL_BASE}/`} className="flex items-center">
+            <Figure.Image src={logoVesta} width={80} className="mr-2 self-center" />
             Vesta Risk Manager
           </Navbar.Brand>
         </Container>

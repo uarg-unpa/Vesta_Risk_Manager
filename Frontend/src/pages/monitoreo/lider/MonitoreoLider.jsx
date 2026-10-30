@@ -2,7 +2,7 @@ import React from "react";
 import NavegadorLider from "../../../components/NavegadorLider";
 import Footer from "../../../components/Footer";
 import Contenedor from "../../../components/Contenedor";
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button } from "@/components/ui";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { useUsuario } from "../../../context/usuarioContext";
 import { formatearFecha } from "../../../utils/funciones";
@@ -48,7 +48,7 @@ export default function MonitoreoLider() {
         </>
         <div style={{ minHeight: "50vh" }}>
           <p>Seleccione una de las siguientes opciones:</p>
-          <div className="d-flex gap-3" style={{ minHeight: "10vh" }}>
+          <div className="flex gap-3" style={{ minHeight: "10vh" }}>
             <Button
               className="boton_2"
               onClick={() => {
@@ -92,7 +92,7 @@ export default function MonitoreoLider() {
           </div>
           <hr ></hr>
           <p>Informes:</p>
-          <div className="d-flex gap-3" style={{ minHeight: "10vh" }}>
+          <div className="flex gap-3" style={{ minHeight: "10vh" }}>
             <Button className="boton_2" onClick={() =>{
               navigate(
                 `/inicio/proyecto/${comprobacionEspectador ? "espectador" : "lider"}/${id_proyecto}/monitoreo/incidencias`

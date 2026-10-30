@@ -2,7 +2,7 @@ import React from "react";
 import NavegadorLider from "../components/NavegadorLider";
 import Contenedor from "../components/Contenedor";
 import DiagramaEscudo from "../assets/img/Diagrama_escudo.png";
-import { Figure } from "react-bootstrap";
+import { Figure } from "@/components/ui";
 import Footer from "../components/Footer";
 
 export default function Ayuda() {
@@ -11,7 +11,7 @@ export default function Ayuda() {
       <NavegadorLider />
       <Contenedor>
         <h3>Ayuda del Sistema</h3>
-        <div className="d-flex flex-column justify-content-center align-items-center">
+        <div className="flex flex-col justify-center items-center">
           <Figure.Image src={DiagramaEscudo} width={450} />
           <section>
             <h4>Diagrama de Flujo: Estado de los Riesgos</h4>

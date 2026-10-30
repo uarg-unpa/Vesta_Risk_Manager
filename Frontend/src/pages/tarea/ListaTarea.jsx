@@ -9,7 +9,7 @@ import {
   OverlayTrigger,
   Table,
   Tooltip,
-} from "react-bootstrap";
+} from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -138,7 +138,7 @@ export default function ListaTarea() {
                             setCompletar(true)
                             setTareaSeleccionada(tarea.id_tarea)
                           }}
-                          className={tarea.estado == '1' || tarea.pertenece == 0 || comprobacionEspectador ? "d-none":""}
+                          className={tarea.estado == '1' || tarea.pertenece == 0 || comprobacionEspectador ? "hidden":""}
                         >
                           <FontAwesomeIcon icon={faSquareCheck} />
                         </Button>
@@ -154,7 +154,7 @@ export default function ListaTarea() {
                             setDeshacer(true)
                             setTareaSeleccionada(tarea.id_tarea)
                           }}
-                          className={tarea.estado == '0' || comprobacionEspectador ? "d-none":""}
+                          className={tarea.estado == '0' || comprobacionEspectador ? "hidden":""}
                         >
                           <FontAwesomeIcon icon={faSquareXmark} />
                         </Button>
@@ -181,7 +181,7 @@ export default function ListaTarea() {
                 </tr>
               )) : 
               <tr>
-                <td colSpan="6" className="text-center fs-5">
+                <td colSpan="6" className="text-center text-lg">
                   No hay tareas registradas.
                 </td>
               </tr>

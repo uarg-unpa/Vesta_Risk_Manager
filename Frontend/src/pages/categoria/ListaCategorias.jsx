@@ -3,7 +3,7 @@ import Navegador from "../../components/Navegador";
 import Footer from "../../components/Footer";
 import Contenedor from "../../components/Contenedor";
 import { useLoaderData, useLocation } from "react-router-dom";
-import { Table, Button, Modal, Alert, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Table, Button, Modal, Alert, OverlayTrigger, Tooltip } from "@/components/ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -53,7 +53,7 @@ export default function ListaCategorias() {
     <>
       <Navegador />
       {mensaje ? (
-              <Alert variant="success" className="text-center fs-4">
+              <Alert variant="success" className="text-center text-xl">
                 {mensaje}
               </Alert>
             ) : null}
@@ -70,7 +70,7 @@ export default function ListaCategorias() {
             Nueva categoría
           </Button>
           <Table size="sm" hover className="mt-2">
-            <thead className="table-info">
+            <thead className="bg-[#cff4fc]">
               <tr>
                 <th className="text-center">Nombre</th>
                 <th className="text-center">Descripción</th>

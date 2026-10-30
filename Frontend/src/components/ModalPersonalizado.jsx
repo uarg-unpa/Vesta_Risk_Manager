@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from "@/components/ui";
 import "./../styles/modal.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -27,6 +27,7 @@ export default function ModalPersonalizado({
   onConfirm,
   datosDefecto,
   modificado,
+  placement = "center",
 }) {
   // Estado para controlar si el botón de confirmación ha sido presionado
   const [botonPresionado, setBotonPresionado] = useState(false);
@@ -41,7 +42,7 @@ export default function ModalPersonalizado({
   };
 
   return (
-    <Modal show={show} onHide={handleShow} size="xl">
+    <Modal show={show} onHide={handleShow} size="xl" placement={placement}>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
