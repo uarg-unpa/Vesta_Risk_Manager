@@ -1,8 +1,16 @@
 
-export const URL = "https://c2871312.ferozo.com/Vesta";
-// export const URL = "http://localhost/Vesta";
-// La aplicación se sirve desde la raíz del dominio.
-export const URL_BASE = "";
+const apiUrl = import.meta.env.VITE_API_URL;
+
+if (!apiUrl) {
+  throw new Error("VITE_API_URL no está configurada.");
+}
+
+export const URL = apiUrl.replace(/\/+$/, "");
+// La aplicación se sirve desde la raíz del dominio por defecto.
+export const URL_BASE = (import.meta.env.VITE_APP_BASE_PATH || "").replace(
+  /\/+$/,
+  "",
+);
 
 /**
  * Valida si un correo electrónico tiene un formato válido y pertenece a los dominios permitidos.

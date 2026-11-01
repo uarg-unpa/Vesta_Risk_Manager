@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { installDemoApi } from "./services/demoApi";
+import { URL_BASE } from "./utils/funciones";
 
 import Index from "./pages/Index.jsx";
 import "./styles/tailwind.css";
@@ -507,7 +508,7 @@ const App = () => {
       element: <NoEncontrada />,
     },
   ], {
-    basename: "/"
+    basename: URL_BASE || "/"
   });
 
   return <RouterProvider router={router}></RouterProvider>;
@@ -515,7 +516,7 @@ const App = () => {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <UsuarioProvider>
-      <GoogleOAuthProvider clientId="865850828899-d9raoavrfjenindu8qsunk4p0a3g37vf.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <App />
       </GoogleOAuthProvider>
     </UsuarioProvider>
