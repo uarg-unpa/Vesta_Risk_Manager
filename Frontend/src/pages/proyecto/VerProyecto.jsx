@@ -82,23 +82,27 @@ export default function VerProyecto() {
           <Button className="m-1" onClick={()=>{
             navigate(`/inicio/espectador/proyecto/${proyecto.id_proyecto}`)
           }}>Supervisar Proyecto</Button>
-          <DropdownButton variant="success" title="Establecer estado">
-              <Dropdown.Item onClick={async()=>{
-                await activarProyecto(proyecto.id_proyecto);
-                navigate(0);
-              }} className={proyecto.estado == "activo" ? "active" : ""}>Activo</Dropdown.Item>
-              <Dropdown.Item onClick={async()=>{
-                await inactivarProyecto(proyecto.id_proyecto);
-                navigate(0);
-                }} className={proyecto.estado == "inactivo" ? "active" : ""}>Inactivo</Dropdown.Item>
-                <Dropdown.Item onClick={async()=>{
-                  await abandonarProyecto(proyecto.id_proyecto);
-                  navigate(0);
-                }} className={proyecto.estado == "abandonado" ? "active" : ""}>Abandonado</Dropdown.Item>
-              <Dropdown.Item onClick={async()=>{
-                await finalizarProyecto(proyecto.id_proyecto);
-                  navigate(0);
-                }} className={proyecto.estado == "finalizado" ? "active" : ""}>Finalizado</Dropdown.Item>
+          <DropdownButton
+            variant="success"
+            title="Establecer estado"
+            menuClassName="!top-full !bottom-auto !left-0 !right-auto !mt-1 z-[9999]"
+          >
+            <Dropdown.Item onClick={async()=>{
+              await activarProyecto(proyecto.id_proyecto);
+              navigate(0);
+            }} className={proyecto.estado == "activo" ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Activo</Dropdown.Item>
+            <Dropdown.Item onClick={async()=>{
+              await inactivarProyecto(proyecto.id_proyecto);
+              navigate(0);
+            }} className={proyecto.estado == "inactivo" ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Inactivo</Dropdown.Item>
+            <Dropdown.Item onClick={async()=>{
+              await abandonarProyecto(proyecto.id_proyecto);
+              navigate(0);
+            }} className={proyecto.estado == "abandonado" ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Abandonado</Dropdown.Item>
+            <Dropdown.Item onClick={async()=>{
+              await finalizarProyecto(proyecto.id_proyecto);
+              navigate(0);
+            }} className={proyecto.estado == "finalizado" ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Finalizado</Dropdown.Item>
           </DropdownButton>
           </div>
       </Contenedor>

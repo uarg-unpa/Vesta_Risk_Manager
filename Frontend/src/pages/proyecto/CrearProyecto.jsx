@@ -102,7 +102,13 @@ export default function CrearProyecto() {
 
   const handleChangeParticipante = (e) => {
     let { name, value } = e.target;
-    value = name === "usuarioElegido" ? JSON.parse(value) : value;
+    if (name === "usuarioElegido") {
+      try {
+        value = typeof value === "string" ? JSON.parse(value) : value;
+      } catch (error) {
+        value = value;
+      }
+    }
 
     setFormDataParticipante({
       ...formDataParticipante,
@@ -299,7 +305,7 @@ export default function CrearProyecto() {
     setBotonPresionado(true);
     const comprobarError = {
       nombre: formDataParticipante.nombre.length === 0,
-      usuarioElegido: formDataParticipante.usuarioElegido == null,
+      usuarioElegido: !formDataParticipante.usuarioElegido || Object.keys(formDataParticipante.usuarioElegido).length === 0,
       rol: formDataParticipante.rol.length === 0,
     };
 
@@ -312,13 +318,16 @@ export default function CrearProyecto() {
         usuarioElegido: false,
         rol: false,
       });
-      formDataParticipante.usuarioElegido.rol = formDataParticipante.rol;
+      const participante = {
+        ...formDataParticipante.usuarioElegido,
+        rol: formDataParticipante.rol,
+      };
       setFormData((prevFormData) => {
         return {
           ...prevFormData,
           participantes: [
             ...prevFormData.participantes,
-            formDataParticipante.usuarioElegido,
+            participante,
           ],
         };
       });
@@ -486,7 +495,12 @@ export default function CrearProyecto() {
       const data = await obtenerParticipanteNombre(
         formDataParticipante.nombre
       );
-      const json = JSON.parse(data);
+      let json = [];
+      try {
+        json = typeof data === "string" ? JSON.parse(data) : data;
+      } catch (error) {
+        json = [];
+      }
       // Crear un conjunto con los nombres en formData.participantes
       const nombresFormData = new Set(
         formData.participantes.map((item) => item.nombre_usuario)
@@ -498,7 +512,7 @@ export default function CrearProyecto() {
 
       setParticipantesTotal(participantesFiltrados);
       setParticipantesMostrado(
-        participantesFiltrados.slice(pagina - 1, ITEMSPORPAGINA)
+        participantesFiltrados.slice(0, ITEMSPORPAGINA)
       );
       const cantidadPaginas = Math.ceil(
         participantesFiltrados.length / ITEMSPORPAGINA
@@ -911,6 +925,7 @@ export default function CrearProyecto() {
                 handleChangeParticipante(e);
                 setParticipantesTotal([]);
                 setParticipantesMostrado([]);
+                setErrorParticipante({ ...errorParticipante, nombre: false });
               }}
               onKeyDown={(e)=>{
                 if (e.key == "Enter") {
@@ -946,7 +961,7 @@ export default function CrearProyecto() {
                   name="usuarioElegido"
                   type="radio"
                   checked={
-                    formDataParticipante.usuarioElegido
+                    formDataParticipante.usuarioElegido && formDataParticipante.usuarioElegido.email
                       ? formDataParticipante.usuarioElegido.email === item.email
                       : false
                   }

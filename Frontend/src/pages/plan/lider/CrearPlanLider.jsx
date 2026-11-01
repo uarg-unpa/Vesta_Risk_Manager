@@ -327,7 +327,7 @@ export default function CrearPlanLider() {
           <Form.Group>
             <Form.Label>Tareas</Form.Label>
             <br></br>
-            <Button variant="success" onClick={handleMostrarTarea}>
+            <Button type="button" variant="success" onClick={handleMostrarTarea}>
               <FontAwesomeIcon icon={faPlus} className="mx-1" />
               Agregar Tarea
             </Button>
@@ -363,6 +363,7 @@ export default function CrearPlanLider() {
                             }
                           >
                             <Button
+                              type="button"
                               variant="outline-warning"
                               className="mx-1"
                               onClick={() => {
@@ -380,6 +381,7 @@ export default function CrearPlanLider() {
                               <Tooltip id="tooltip-delete">Eliminar</Tooltip>
                               }>
                             <Button
+                              type="button"
                               variant="outline-danger"
                               className="mx-1"
                               onClick={() => {

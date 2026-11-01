@@ -169,6 +169,7 @@ export default function CrearRiesgo() {
                 label={item.nombre}
                 value={item.id_usuario}
                 name="responsables"
+                className="text-lg"
                 onChange={handleChangeCheck}
                 isInvalid={error.responsables}
               />

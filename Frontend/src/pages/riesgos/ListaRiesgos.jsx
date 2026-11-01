@@ -383,7 +383,7 @@ export default function ListaRiesgos() {
                     
                     <div>
                       <OverlayTrigger
-                        placement={comprobacionLider ? "bottom" : "top"}
+                        placement="top"
                         overlay={<Tooltip id="tooltip-edit">Evaluar</Tooltip>}
                       >
                         <Button
@@ -401,7 +401,7 @@ export default function ListaRiesgos() {
                         </Button>
                       </OverlayTrigger>
                       <OverlayTrigger
-                        placement={comprobacionLider ? "bottom" : "top"}
+                        placement="top"
                         overlay={
                           <Tooltip id="tooltip-edit">Planificar</Tooltip>
                         }

@@ -55,11 +55,11 @@ export default function VerPlan() {
           <p>{plan.descripcion}</p>
           <hr />
           <h4>Tareas del plan</h4>
-          <ul>
-            {plan.tareas.map((tarea) => (
-              <li key={tarea.id_tarea}>
-                <h5>{tarea.nombre} </h5>
-                <ul>
+           <ul className="list-disc pl-8">
+             {plan.tareas.map((tarea) => (
+               <li key={tarea.id_tarea}>
+                 <h5>{tarea.nombre} </h5>
+                 <ul className="list-disc pl-8">
                   <li><b>Descripción:</b> {tarea.descripcion}</li>
                   <li><b>Responsables:</b> {tarea.responsables.map((responsable) => responsable.nombre).join(", ")}</li>
                   <li><b>Estado:</b> {tarea.estado == 0 ? "Pendiente" : "Completada"}</li>

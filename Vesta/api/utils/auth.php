@@ -172,9 +172,9 @@ function middlewareAuthorizationRolProyecto($roles, $params)
         return true;
     }
 
-    if (!isset($params['id_proyecto']) && !isset($params['id_tarea'])) {
+    if (!isset($params['id_proyecto']) && !isset($params['id_tarea']) && !isset($params['id_incidencia'])) {
         header("HTTP/1.1 400 Bad Request");
-        echo json_encode(["error" => "Falta id_proyecto en la ruta"]);
+        echo json_encode(["error" => "Falta una referencia de proyecto en la ruta"]);
         return false;
     }
 
@@ -191,6 +191,16 @@ function middlewareAuthorizationRolProyecto($roles, $params)
         if (!$id_proyecto) {
             header("HTTP/1.1 404 Not Found");
             echo json_encode(["error" => "La tarea no pertenece a ningún proyecto o no existe"]);
+            return false;
+        }
+    }
+    else if (isset($params['id_incidencia'])) {
+        $controladorRiesgo = new GestorRiesgo();
+        $id_proyecto = $controladorRiesgo->obtenerIdProyectoIncidencia($params['id_incidencia']);
+
+        if (!$id_proyecto) {
+            header("HTTP/1.1 404 Not Found");
+            echo json_encode(["error" => "La incidencia no pertenece a ningún proyecto o no existe"]);
             return false;
         }
     }

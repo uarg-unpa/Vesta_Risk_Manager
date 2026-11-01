@@ -1,0 +1,36 @@
+name: vesta
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: vesta-mysql
+    restart: unless-stopped
+    environment:
+      # El usuario/contrasena salen del .env (DB_USER / DB_PASS).
+      # Como en el .env.example DB_USER=root, la contrasena de root es DB_PASS.
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:-root}
+      MYSQL_DATABASE: ${DB_NAME:-bdvestariskmanager}
+      # Si en el .env DB_USER deja de ser "root", descomentar estas 2 lineas
+      # (MySQL no permite crear MYSQL_USER="root"):
+      # MYSQL_USER: ${DB_USER:-root}
+      # MYSQL_PASSWORD: ${DB_PASS:-root}
+      TZ: ${TZ:-America/Argentina/Buenos_Aires}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Se ejecutan solo la primera vez (volumen vacio), en orden alfabetico
+      - ../bdvestariskmanager.sql:/docker-entrypoint-initdb.d/01-bdvestariskmanager.sql:ro
+      - ../datosProyecto.sql:/docker-entrypoint-initdb.d/02-datosProyecto.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mysql_data:

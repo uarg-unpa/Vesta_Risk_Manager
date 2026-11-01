@@ -123,7 +123,13 @@ export default function ModificarProyecto() {
 
   const handleChangeParticipante = (e) => {
     let { name, value } = e.target;
-    value = name === "usuarioElegido" ? JSON.parse(value) : value;
+    if (name === "usuarioElegido") {
+      try {
+        value = typeof value === "string" ? JSON.parse(value) : value;
+      } catch (error) {
+        value = value;
+      }
+    }
 
     setFormDataParticipante({
       ...formDataParticipante,
@@ -253,7 +259,7 @@ export default function ModificarProyecto() {
     setBotonPresionado(true);
     const comprobarError = {
       nombre: formDataParticipante.nombre.length === 0,
-      usuarioElegido: formDataParticipante.usuarioElegido == null,
+      usuarioElegido: !formDataParticipante.usuarioElegido || Object.keys(formDataParticipante.usuarioElegido).length === 0,
       rol: formDataParticipante.rol.length === 0,
     };
 
@@ -266,13 +272,16 @@ export default function ModificarProyecto() {
         usuarioElegido: false,
         rol: false,
       });
-      formDataParticipante.usuarioElegido.rol = formDataParticipante.rol;
+      const participante = {
+        ...formDataParticipante.usuarioElegido,
+        rol: formDataParticipante.rol,
+      };
       setFormData((prevFormData) => {
         return {
           ...prevFormData,
           participantes: [
             ...prevFormData.participantes,
-            formDataParticipante.usuarioElegido,
+            participante,
           ],
         };
       });
@@ -577,7 +586,12 @@ export default function ModificarProyecto() {
       });
     } else {
       const data = await obtenerParticipanteNombre(formDataParticipante.nombre);
-      const json = JSON.parse(data);
+      let json = [];
+      try {
+        json = typeof data === "string" ? JSON.parse(data) : data;
+      } catch (error) {
+        json = [];
+      }
       // Crear un conjunto con los nombres en formData.participantes
       const participantesFormData = new Set(
         formData.participantes.map((p) => p.id_usuario)
@@ -589,7 +603,7 @@ export default function ModificarProyecto() {
 
       setParticipantesTotal(participantesFiltrados);
       setParticipantesMostrado(
-        participantesFiltrados.slice(pagina - 1, ITEMSPORPAGINA)
+        participantesFiltrados.slice(0, ITEMSPORPAGINA)
       );
       const cantidadPaginas = Math.ceil(
         participantesFiltrados.length / ITEMSPORPAGINA
@@ -679,11 +693,11 @@ export default function ModificarProyecto() {
                 {formData.participantes && formData.participantes.length > 0
                   ? formData.participantes.map((item, key) => (
                       <tr key={key}>
-                        <td style={{ minWidth: "12em", textAlign: "center" }}>
+                        <td className="text-center" style={{ minWidth: "12em" }}>
                           {item.nombre ? item.nombre : item.nombre_usuario}
                         </td>
-                        <td>{item.rol}</td>
-                        <td>
+                        <td className="text-center">{item.rol}</td>
+                        <td className="text-center">
                           <OverlayTrigger
                             placement="top"
                             overlay={
@@ -753,10 +767,10 @@ export default function ModificarProyecto() {
                   ? formData.iteraciones.map((item, key) => (
                       <>
                         <tr key={key}>
-                          <td>{item.nombre}</td>
-                          <td>{formatearFecha(item.fecha_inicio)}</td>
-                          <td>{formatearFecha(item.fecha_fin)}</td>
-                            <td style={{ minWidth: "12em", textAlign: "center" }}>
+                          <td className="text-center">{item.nombre}</td>
+                          <td className="text-center">{formatearFecha(item.fecha_inicio)}</td>
+                          <td className="text-center">{formatearFecha(item.fecha_fin)}</td>
+                          <td className="text-center" style={{ minWidth: "12em" }}>
                             <OverlayTrigger
                               placement="top"
                               overlay={
@@ -821,8 +835,8 @@ export default function ModificarProyecto() {
                 {formData.categorias && formData.categorias.length > 0
                   ? formData.categorias.map((item, key) => (
                       <tr key={key}>
-                        <td>{item.nombre}</td>
-                        <td>{item.descripcion}</td>
+                        <td className="text-center">{item.nombre}</td>
+                        <td className="text-center">{item.descripcion}</td>
                       </tr>
                     ))
                   : null}
@@ -893,6 +907,7 @@ export default function ModificarProyecto() {
                 handleChangeParticipante(e);
                 setParticipantesTotal([]);
                 setParticipantesMostrado([]);
+                setErrorParticipante({ ...errorParticipante, nombre: false });
               }}
               onKeyDown={(e) => {
                 if (e.key == "Enter") {
@@ -930,7 +945,7 @@ export default function ModificarProyecto() {
                   name="usuarioElegido"
                   type="radio"
                   checked={
-                    formDataParticipante.usuarioElegido
+                    formDataParticipante.usuarioElegido && formDataParticipante.usuarioElegido.email
                       ? formDataParticipante.usuarioElegido.email === item.email
                       : false
                   }

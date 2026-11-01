@@ -45,22 +45,24 @@ export default function Navegador() {
                 <FontAwesomeIcon icon={faHouse} className="mx-2" />
                 Inicio
               </Nav.Link>
-              <NavDropdown
-                title="Administrar acceso"
-                id="basic-nav-dropdown"
-                menuVariant="dark"
-                menuClassName="!border-white/15 !bg-[#212529]"
-                className={usuario.nombre_perfil == "Administrador" ? "border-0 bg-transparent px-4 py-2 text-base text-white/55 hover:border-0 hover:bg-transparent hover:text-white" : "hidden"}
-              >
-                <NavDropdown.Item className="!text-white hover:!bg-white/10 hover:!text-white" href={`${URL_BASE}/inicio/usuarios`}>
-                  <FontAwesomeIcon icon={faUser} className="mx-2" />
-                  Usuarios
-                </NavDropdown.Item>
-                <NavDropdown.Item className="!text-white hover:!bg-white/10 hover:!text-white" href={`${URL_BASE}/inicio/perfiles`}>
-                  <FontAwesomeIcon icon={faUserGear} className="mx-2" />
-                  Perfiles
-                </NavDropdown.Item>
-              </NavDropdown>
+              {usuario?.nombre_perfil === "Administrador" && (
+                <NavDropdown
+                  title="Administrar acceso"
+                  id="basic-nav-dropdown"
+                  menuVariant="dark"
+                  menuClassName="!border-white/15 !bg-[#212529]"
+                  className="border-0 bg-transparent px-4 py-2 text-base text-white/55 hover:border-0 hover:bg-transparent hover:text-white"
+                >
+                  <NavDropdown.Item className="!text-white hover:!bg-white/10 hover:!text-white" href={`${URL_BASE}/inicio/usuarios`}>
+                    <FontAwesomeIcon icon={faUser} className="mx-2" />
+                    Usuarios
+                  </NavDropdown.Item>
+                  <NavDropdown.Item className="!text-white hover:!bg-white/10 hover:!text-white" href={`${URL_BASE}/inicio/perfiles`}>
+                    <FontAwesomeIcon icon={faUserGear} className="mx-2" />
+                    Perfiles
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
               <Nav.Link href={`${URL_BASE}/salir`}>
                 <FontAwesomeIcon
                   icon={faArrowRightFromBracket}

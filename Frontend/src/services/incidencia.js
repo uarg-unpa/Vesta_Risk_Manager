@@ -77,3 +77,18 @@ export const eliminarIncidencia = async (id_incidencia) => {
 
   return json;
 };
+
+export const actualizarIncidencia = async (id_incidencia, data) => {
+  const token = localStorage.getItem("usuario");
+  const respuesta = await fetch(`${URL}/incidencia/${id_incidencia}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  const json = await respuesta.json();
+
+  return json.actualizacion ?? json.modificacion ?? json;
+};

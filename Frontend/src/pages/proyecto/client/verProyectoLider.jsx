@@ -33,6 +33,7 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import "../../../styles/BotonDescarga.css";
 import { useUsuario } from "../../../context/usuarioContext";
 import { useState } from "react";
+import { width } from "@fortawesome/free-brands-svg-icons/fa42Group";
 
 ChartJS.register(
   RadialLinearScale,
@@ -197,13 +198,13 @@ export default function VerProyectoLider() {
         </Alert>
       ) : null}
       <>
-        <Container className="!mx-0 !max-w-none mt-2 flex flex-col justify-around">
-          <Row
+        <Container className="!mx-0 !max-w-none mt-2 flex flex-col justify-start gap-2">
+            <Row
             className="flex"
-            style={{ height: "50vh", gap: "2em", flexWrap: "nowrap", width: "100%" }}
+            style={{ height: "40vh", gap: "1em", flexWrap: "nowrap", width: "100%" }}
           >
-            <Col xs={9}>
-              <Card style={{ maxHeight: "50vh" }}>
+            <Col xs={9} style={{ flex: "1 1 0", minWidth: 0, width: "auto" }}>
+              <Card style={{ maxHeight: "40vh", minWidth: 0 }}>
                   <Card.Header className="flex justify-between items-center">
                     <CardTitle>Evolución de cantidad de riesgo</CardTitle>
                   <div className="flex items-center gap-2">
@@ -212,7 +213,7 @@ export default function VerProyectoLider() {
                         {"Seleccionar iteración"}
                       </Dropdown.Toggle>
                       <Dropdown.Menu
-                        style={{ maxHeight: "50vh", overflowY: "auto" }}
+                        style={{ maxHeight: "40vh", overflowY: "auto" }}
                       >
                         <Form.Check
                           type="checkbox"
@@ -342,8 +343,8 @@ export default function VerProyectoLider() {
                 </Card.Body>
               </Card>
             </Col>
-            <Col xs={5} style={{ width: "30vw" }}>
-              <Card style={{ maxHeight: "55vh" }}>
+            <Col xs={5} style={{ flex: "0 1 30%", minWidth: 0, width: "auto" }}>
+              <Card style={{ maxHeight: "55vh", minWidth: 0, width:"80%" }}>
                   <Card.Header className="flex justify-between items-center">
                     <CardTitle>Resúmen de riesgos</CardTitle>
                   {!comprobacionEspectador && (
@@ -397,7 +398,7 @@ export default function VerProyectoLider() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                paddingBottom:"20px"
+                 paddingBottom:"8px"
               }}
             >
               <h2
@@ -413,7 +414,7 @@ export default function VerProyectoLider() {
             className="flex"
             style={{ flexWrap: "nowrap", width: "100%" }}
           >
-            <Col xs={9}>
+             <Col xs={9} style={{ flex: "1 1 0", minWidth: 0, width: "auto" }}>
               <Row className="mb-3">
                 <Col xs={3}>
                   <Card>
@@ -421,7 +422,7 @@ export default function VerProyectoLider() {
                       className="flex justify-center items-center"
                       style={{ minHeight: 65 }}
                     >
-                      <CardTitle className="mb-0 text-center">Riesgos activos</CardTitle>
+                       <CardTitle className="mb-0 text-center text-lg">Riesgos activos</CardTitle>
                     </Card.Header>
                     <Card.Body>
                       <Card.Text className="text-center text-4xl">
@@ -435,7 +436,7 @@ export default function VerProyectoLider() {
                     <Card.Header
                       className="flex justify-center items-center"
                     style={{ minHeight: 65, textAlign: "center" }}>
-                      <CardTitle className="mb-0 text-center">Evaluaciones pendientes</CardTitle>
+                       <CardTitle className="mb-0 text-center text-lg">Evaluaciones pendientes</CardTitle>
                     </Card.Header>
                     <Card.Body>
                       <Card.Text className="text-center text-4xl">
@@ -450,7 +451,7 @@ export default function VerProyectoLider() {
                       className="flex justify-center items-center"
                       style={{ minHeight: 65 }}
                     >
-                      <CardTitle className="mb-0 text-center">Planes de acción</CardTitle>
+                       <CardTitle className="mb-0 text-center text-lg">Planes de acción</CardTitle>
                     </Card.Header>
                     <Card.Body>
                       <Card.Text className="text-center text-4xl">
@@ -465,7 +466,7 @@ export default function VerProyectoLider() {
                       className="flex justify-center items-center"
                       style={{ minHeight: 65 }}
                     >
-                      <CardTitle className="mb-0 text-center">Requiere atención</CardTitle>
+                       <CardTitle className="mb-0 text-center text-lg">Requiere atención</CardTitle>
                     </Card.Header>
                     <Card.Body>
                       <Card.Text className="text-center text-4xl">
@@ -476,8 +477,8 @@ export default function VerProyectoLider() {
                 </Col>
               </Row>
             </Col>
-            <Col xs={5} style={{ width: "40%" }}>
-              <Card style={{ maxHeight: "65vh" }}>
+             <Col xs={5} style={{ flex: "0 1 35%", minWidth: 0, width: "auto" }}>
+               <Card style={{ maxHeight: "55vh", minWidth: 0, width:"80%" }}>
                 <Card.Header className="flex justify-between items-center">
                   <CardTitle>Matriz tongji</CardTitle>
                   {!comprobacionEspectador && (
@@ -488,7 +489,7 @@ export default function VerProyectoLider() {
                     />
                   )}
                 </Card.Header>
-                <Card.Body>
+                 <Card.Body className="p-2">
                   <MantrizTonji puntos={puntos} ref={grafico_matriz} />
                 </Card.Body>
               </Card>

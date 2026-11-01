@@ -78,22 +78,22 @@ export default function ListaProyecto() {
                 setOrden(1)
                 setPaginaActual(1)
                 localStorage.setItem("orden_proyecto", 1)
-              }} className={orden == 1 ? "active" : ""}>Activos</Dropdown.Item>
+               }} className={orden == 1 ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Activos</Dropdown.Item>
               <Dropdown.Item onClick={()=>{
                 setOrden(2)
                 setPaginaActual(1)
                 localStorage.setItem("orden_proyecto", 2)
-                }} className={orden == 2 ? "active" : ""}>Inactivos</Dropdown.Item>
+                 }} className={orden == 2 ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Inactivos</Dropdown.Item>
                 <Dropdown.Item onClick={()=>{
                 setOrden(3)
                 setPaginaActual(1)
                 localStorage.setItem("orden_proyecto", 3)
-                }} className={orden == 3 ? "active" : ""}>Abandonados</Dropdown.Item>
+                 }} className={orden == 3 ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Abandonados</Dropdown.Item>
               <Dropdown.Item onClick={()=>{
                 setOrden(4)
                 setPaginaActual(1)
                 localStorage.setItem("orden_proyecto", 4)
-                }} className={orden == 4 ? "active" : ""}>Finalizados</Dropdown.Item>
+                 }} className={orden == 4 ? "bg-blue-600 text-white hover:bg-blue-700" : ""}>Finalizados</Dropdown.Item>
           </DropdownButton>
           </div>
           

@@ -1,4 +1,5 @@
 import { cloneElement, createContext, useContext, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const cx = (...classes) => classes.filter(Boolean).join(" ");
 
@@ -47,7 +48,7 @@ export function Alert({ variant = "primary", className, children, ...props }) {
 }
 
 function CardRoot({ className, children, ...props }) {
-  return <section className={cx("overflow-hidden rounded-md border border-slate-300 bg-white", className)} {...props}>{children}</section>;
+  return <section className={cx("rounded-md border border-slate-300 bg-white", className)} {...props}>{children}</section>;
 }
 CardRoot.Header = ({ className, children, ...props }) => <header className={cx("border-b border-slate-300 bg-black/[.03] px-4 py-3 font-normal", className)} {...props}>{children}</header>;
 CardRoot.Body = ({ className, children, ...props }) => <div className={cx("p-4", className)} {...props}>{children}</div>;
@@ -86,8 +87,8 @@ function FormRoot({ className, children, ...props }) {
 FormRoot.Group = ({ className, children, ...props }) => <div className={cx("mb-3", className)} {...props}>{children}</div>;
 FormRoot.Label = ({ className, children, ...props }) => <label className={cx("mb-1 block text-base font-normal leading-6 text-slate-900", className)} {...props}>{children}</label>;
 FormRoot.Text = ({ className, children, ...props }) => <p className={cx("mt-1 text-sm text-slate-600", className)} {...props}>{children}</p>;
-FormRoot.Control = ({ as: Component = "input", className, ...props }) => <Component className={cx("block w-full rounded-md border border-slate-400 bg-white px-3 py-1.5 text-base font-normal leading-6 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:bg-slate-200", className)} {...props} />;
-FormRoot.Select = ({ className, children, ...props }) => <select className={cx("block w-full rounded-md border border-slate-400 bg-white px-3 py-1.5 text-base font-normal leading-6 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:bg-slate-200", className)} {...props}>{children}</select>;
+FormRoot.Control = ({ as: Component = "input", className, ...props }) => <Component className={cx("block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-base font-normal leading-6 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:bg-slate-200", className)} {...props} />;
+FormRoot.Select = ({ className, children, ...props }) => <select className={cx("block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-base font-normal leading-6 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:bg-slate-200", className)} {...props}>{children}</select>;
 FormRoot.Check = ({ className, label, id, isInvalid, ...props }) => <label className={cx("flex items-center gap-2 text-sm text-slate-700", className)}><input id={id} type={props.type ?? "checkbox"} className={cx("h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500", isInvalid && "border-red-500")} {...props} />{label && <span>{label}</span>}</label>;
 export const Form = FormRoot;
 
@@ -158,38 +159,53 @@ export function DropdownButton({ title, children, menuClassName, ...props }) { r
 
 export function OverlayTrigger({ overlay, children, placement = "top" }) {
   const [visible, setVisible] = useState(false);
+  const [position, setPosition] = useState(null);
   const tooltipId = useId();
-  const placementClass = {
-    top: "bottom-full left-1/2 mb-2 -translate-x-1/2",
-    bottom: "left-1/2 top-full mt-2 -translate-x-1/2",
-    start: "right-full top-1/2 mr-2 -translate-y-1/2",
-    end: "left-full top-1/2 ml-2 -translate-y-1/2",
-  }[placement] ?? "bottom-full left-1/2 mb-2 -translate-x-1/2";
   const tooltipContent = overlay?.props?.children ?? overlay;
+  const showTooltip = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const positions = {
+      top: { left: rect.left + rect.width / 2, top: rect.top - 8 },
+      bottom: { left: rect.left + rect.width / 2, top: rect.bottom + 8 },
+      start: { left: rect.left - 8, top: rect.top + rect.height / 2 },
+      end: { left: rect.right + 8, top: rect.top + rect.height / 2 },
+    };
+    setPosition(positions[placement] ?? positions.top);
+    setVisible(true);
+  };
   const trigger = cloneElement(children, {
     "aria-describedby": visible ? tooltipId : undefined,
   });
+  const tooltipClass = {
+    top: "-translate-x-1/2 -translate-y-full",
+    bottom: "-translate-x-1/2",
+    start: "-translate-x-full -translate-y-1/2",
+    end: "-translate-y-1/2",
+  }[placement] ?? "-translate-x-1/2 -translate-y-full";
 
   return (
     <span
-      className="relative inline-flex"
-      onMouseEnter={() => setVisible(true)}
+      className="inline-flex"
+      onMouseEnter={showTooltip}
       onMouseLeave={() => setVisible(false)}
-      onFocus={() => setVisible(true)}
+      onFocus={showTooltip}
       onBlur={() => setVisible(false)}
     >
       {trigger}
-      <span
-        id={tooltipId}
-        role="tooltip"
-        className={cx(
-          "pointer-events-none absolute z-50 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs font-normal text-white shadow-sm transition-opacity duration-200",
-          placementClass,
-          visible ? "opacity-100" : "opacity-0"
-        )}
-      >
-        {tooltipContent}
-      </span>
+      {visible && position && createPortal(
+        <span
+          id={tooltipId}
+          role="tooltip"
+          className={cx(
+            "pointer-events-none fixed z-[9999] whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs font-normal text-white shadow-sm",
+            tooltipClass
+          )}
+          style={{ left: position.left, top: position.top }}
+        >
+          {tooltipContent}
+        </span>,
+        document.body
+      )}
     </span>
   );
 }

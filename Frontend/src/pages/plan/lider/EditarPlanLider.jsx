@@ -347,7 +347,7 @@ export default function EditarPlanLider() {
           <Form.Group>
             <Form.Label>Tareas</Form.Label>
             <br></br>
-            <Button variant="success" onClick={handleMostrarTarea}>
+            <Button type="button" variant="success" onClick={handleMostrarTarea}>
               <FontAwesomeIcon icon={faPlus} className="mx-1" />
               Agregar Tarea
             </Button>
@@ -382,8 +382,9 @@ export default function EditarPlanLider() {
                               <Tooltip id="tooltip-edit">Editar</Tooltip>
                             }
                           >
-                            <Button
-                              variant="outline-warning"
+                              <Button
+                                type="button"
+                                variant="outline-warning"
                               className="mx-1"
                               onClick={() => {
                                 setFormDataTarea(tarea);
@@ -399,8 +400,9 @@ export default function EditarPlanLider() {
                               <Tooltip id="tooltip-delete">Eliminar</Tooltip>
                             }
                           >
-                            <Button
-                              variant="outline-danger"
+                              <Button
+                                type="button"
+                                variant="outline-danger"
                               className="mx-1"
                               onClick={() => {
                                 setEliminarTarea(true);

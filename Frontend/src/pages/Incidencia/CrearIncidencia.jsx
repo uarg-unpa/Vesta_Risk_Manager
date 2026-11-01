@@ -22,7 +22,8 @@ export default function CrearIncidencia() {
 
   const location = useLocation()
 
-  const ruta = location.state?.ruta
+  const tipoUsuario = location.pathname.includes("desarrollador") ? "desarrollador" : "lider";
+  const ruta = location.state?.ruta || `/inicio/proyecto/${tipoUsuario}/${id_proyecto}/monitoreo/incidencias`;
   
   const [formData, setFormData] = useState({
     descripcion: "",
@@ -162,7 +163,7 @@ const handleRiesgoSelection = (id_riesgo) => {
             Si desea cancelar, presione el bot&oacute;n <b>Cancelar</b>.
           </p>
         </>
-        <Form>
+        <Form onSubmit={(e) => e.preventDefault()}>
           <h4>Propiedades</h4>
           
           <Form.Group className="mb-3">
@@ -188,39 +189,48 @@ const handleRiesgoSelection = (id_riesgo) => {
             <Row>
               <Col xs={4}>
                 <Card 
-                  border={formData.gravedad === "Baja" ? "success" : 'secondary'}
-                  className={`mb-3 ${formData.gravedad === "Baja" ? `border-3` : ''}`}
+                  className={`mb-3 border-2 ${formData.gravedad === "Baja" ? "border-emerald-600" : "border-slate-300"}`}
                   onClick={() => handleSeveritySelect("Baja")}
-                  style={{ cursor: 'pointer' }}
+                  onKeyDown={(event) => event.key === "Enter" && handleSeveritySelect("Baja")}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={formData.gravedad === "Baja"}
+                  style={{ cursor: "pointer", borderColor: formData.gravedad === "Baja" ? "#059669" : "#cbd5e1" }}
                 >
-                  <Card.Body className={`text-center text-emerald-600`}>
-                    <Card.Title>Baja</Card.Title>
+                  <Card.Body className="text-center text-emerald-600">
+                    <Card.Title className="!text-emerald-600">Baja</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
 
               <Col xs={4}>
                 <Card 
-                  border={formData.gravedad === "Media" ? "warning" : 'secondary'}
-                  className={`mb-3 ${formData.gravedad === "Media" ? `border-3` : ''}`}
+                  className={`mb-3 border-2 ${formData.gravedad === "Media" ? "border-amber-500" : "border-slate-300"}`}
                   onClick={() => handleSeveritySelect("Media")}
-                  style={{ cursor: 'pointer' }}
+                  onKeyDown={(event) => event.key === "Enter" && handleSeveritySelect("Media")}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={formData.gravedad === "Media"}
+                  style={{ cursor: "pointer", borderColor: formData.gravedad === "Media" ? "#f59e0b" : "#cbd5e1" }}
                 >
-                  <Card.Body className={`text-center text-amber-600`}>
-                    <Card.Title>Media</Card.Title>
+                  <Card.Body className="text-center text-amber-600">
+                    <Card.Title className="!text-amber-600">Media</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
 
               <Col xs={4}>
                 <Card 
-                  border={formData.gravedad === "Alta" ? "danger" : 'secondary'}
-                  className={`mb-3 ${formData.gravedad === "Alta" ? `border-3` : ''}`}
+                  className={`mb-3 border-2 ${formData.gravedad === "Alta" ? "border-red-600" : "border-slate-300"}`}
                   onClick={() => handleSeveritySelect("Alta")}
-                  style={{ cursor: 'pointer' }}
+                  onKeyDown={(event) => event.key === "Enter" && handleSeveritySelect("Alta")}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={formData.gravedad === "Alta"}
+                  style={{ cursor: "pointer", borderColor: formData.gravedad === "Alta" ? "#dc2626" : "#cbd5e1" }}
                 >
-                  <Card.Body className={`text-center text-red-600`}>
-                    <Card.Title>Alta</Card.Title>
+                  <Card.Body className="text-center text-red-600">
+                    <Card.Title className="!text-red-600">Alta</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
@@ -240,7 +250,7 @@ const handleRiesgoSelection = (id_riesgo) => {
               value={busquedaRiesgo}
               onChange={(e) => setBusquedaRiesgo(e.target.value)}
             />
-            <Button variant="outline-secondary">
+            <Button type="button" variant="outline-secondary">
               <FontAwesomeIcon icon={faMagnifyingGlass} />
             </Button>
           </InputGroup>
@@ -283,6 +293,7 @@ const handleRiesgoSelection = (id_riesgo) => {
 
           <div>
             <Button
+              type="button"
               variant="outline-success"
               className="mx-1"
               onClick={handleClick}
@@ -290,6 +301,7 @@ const handleRiesgoSelection = (id_riesgo) => {
               ✓ Confirmar
             </Button>
             <Button
+              type="button"
               variant="outline-danger"
               className="mx-1"
               onClick={() => navigate(ruta)}

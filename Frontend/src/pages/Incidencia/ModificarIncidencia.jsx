@@ -2,49 +2,71 @@ import React, { useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import Footer from "../../components/Footer";
 import Navegador from "../../components/Navegador";
-import { Button, Form } from "@/components/ui";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { Button, Card, Col, Form, Row } from "@/components/ui";
+import { useLoaderData, useLocation, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { verificarError } from "../../utils/funciones";
-import { actualizarIncidencia } from "../../services/informes";
+import { actualizarIncidencia } from "../../services/incidencia";
+
+const normalizarGravedad = (gravedad) => {
+  const valores = {
+    baja: "Baja",
+    media: "Media",
+    intermedia: "Media",
+    alta: "Alta",
+  };
+
+  return valores[String(gravedad ?? "").toLowerCase()] ?? gravedad ?? "";
+};
 
 export default function ModificarIncidencia() {
   const { incidencia } = useLoaderData();
-  const { id_incidencia } = useParams();
-
+  const { id_incidencia, id_proyecto } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  const tipoUsuario = location.pathname.includes("desarrollador") ? "desarrollador" : "lider";
+  const ruta = location.state?.ruta || `/inicio/proyecto/${tipoUsuario}/${id_proyecto}/monitoreo/incidencias`;
+
   const [formData, setFormData] = useState({
-    descripcion: incidencia.descripcion,
-    gravedad: incidencia.gravedad,
+    descripcion: incidencia.descripcion ?? "",
+    gravedad: normalizarGravedad(incidencia.gravedad),
   });
-  const [error, setError] = useState({
-    descripcion: false,
-    gravedad: false,
-  });
+  const [error, setError] = useState({ descripcion: false, gravedad: false });
   const [botonPresionado, setBotonPresionado] = useState(false);
 
-  // Manejar cambios en los inputs
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: false }));
+  };
+
+  const handleSeveritySelect = (gravedad) => {
+    setFormData((prev) => ({ ...prev, gravedad }));
+    setError((prev) => ({ ...prev, gravedad: false }));
+  };
 
   const handleClick = async () => {
-    setBotonPresionado(true);
     const comprobacionError = {
-      descripcion: formData.descripcion.length === 0,
+      descripcion: !formData.descripcion.trim(),
+      gravedad: !formData.gravedad,
     };
-
     setError(comprobacionError);
-    const comprobacion = verificarError(comprobacionError);
 
-    if (!comprobacion) {
+    if (Object.values(comprobacionError).some(Boolean)) return;
+
+    setBotonPresionado(true);
+    try {
       const resultado = await actualizarIncidencia(id_incidencia, formData);
       if (resultado) {
-        navigate(`/inicio/proyecto/lider/${proyecto.id_proyecto}/monitoreo/incidencias`, {
+        navigate(ruta, {
           state: { mensaje: "Incidencia modificada con éxito" },
         });
       }
+    } finally {
+      setBotonPresionado(false);
     }
-    setBotonPresionado(false);
   };
+
   return (
     <>
       <Navegador />
@@ -57,72 +79,90 @@ export default function ModificarIncidencia() {
             Si desea cancelar, presione el bot&oacute;n <b>Cancelar</b>.
           </p>
         </>
-        <Form>
+        <Form onSubmit={(event) => event.preventDefault()}>
           <h4>Propiedades</h4>
           <Form.Group>
-            <Form.Label>Descripci&oacute;n</Form.Label>
+            <Form.Label>Descripción</Form.Label>
             <Form.Control
-              type="text"
+              as="textarea"
+              rows={3}
               onChange={handleChange}
               placeholder="Ingrese la descripción de la incidencia"
               name="descripcion"
               value={formData.descripcion}
-              isInvalid={error.descripcion || error.descripcionIgual}
+              isInvalid={error.descripcion}
             />
-            {(error.descripcion || error.descripcionIgual) && (
+            {error.descripcion && (
               <Form.Text className="text-red-600">
-                Revise que la descripci&oacute;n{" "}
-                {formData.descripcion.length === 0
-                  ? "no este vacia"
-                  : null}
-                .
+                La descripción no puede estar vacía.
               </Form.Text>
             )}
           </Form.Group>
           <Form.Group>
             <Form.Label>Gravedad</Form.Label>
-            <Form.Select
-              name="gravedad"
-              value={formData.gravedad}
-              onChange={handleChangeSelect}
-              isInvalid={errorPrincipal.gravedad}
-            >
-              <option value={""}>Seleccione la gravedad de la incidencia</option>
-              <option value={"baja"}>Baja</option>
-              <option value={"intermedia"}>Intermedia</option>
-              <option value={"alta"}>Alta</option>
-            </Form.Select>
-            {errorPrincipal.gravedad && (
+            <Row>
+              <Col xs={4}>
+                <Card
+                  className={`mb-3 border-2 ${formData.gravedad === "Baja" ? "border-emerald-600" : "border-slate-300"}`}
+                  onClick={() => handleSeveritySelect("Baja")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Card.Body className="text-center text-emerald-600">
+                    <Card.Title className="!text-emerald-600">Baja</Card.Title>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col xs={4}>
+                <Card
+                  className={`mb-3 border-2 ${formData.gravedad === "Media" ? "border-amber-500" : "border-slate-300"}`}
+                  onClick={() => handleSeveritySelect("Media")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Card.Body className="text-center text-amber-600">
+                    <Card.Title className="!text-amber-600">Media</Card.Title>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col xs={4}>
+                <Card
+                  className={`mb-3 border-2 ${formData.gravedad === "Alta" ? "border-red-600" : "border-slate-300"}`}
+                  onClick={() => handleSeveritySelect("Alta")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Card.Body className="text-center text-red-600">
+                    <Card.Title className="!text-red-600">Alta</Card.Title>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+            {error.gravedad && (
               <Form.Text className="text-red-600">
                 Seleccione la gravedad de la incidencia.
               </Form.Text>
             )}
           </Form.Group>
         </Form>
-        <>
-          <Button
-            variant="outline-success"
-            className="mx-1"
-            onClick={handleClick}
-            disabled={botonPresionado}
-          >
-            <FontAwesomeIcon icon={faCheck} style={{ marginRight: "5px" }} />
-            Confirmar
-          </Button>
-          <Button
-            variant="outline-danger"
-            className="mx-1"
-            onClick={() => {
-              navigate(`/inicio/proyecto/lider/${proyecto.id_proyecto}/monitoreo/incidencias`);
-            }}
-          >
-            <FontAwesomeIcon icon={faXmark} style={{ marginRight: "5px" }} />
-            Cancelar
-          </Button>
-        </>
+        <Button
+          type="button"
+          variant="outline-success"
+          className="mx-1"
+          onClick={handleClick}
+          disabled={botonPresionado}
+        >
+          <FontAwesomeIcon icon={faCheck} style={{ marginRight: "5px" }} />
+          Confirmar
+        </Button>
+        <Button
+          type="button"
+          variant="outline-danger"
+          className="mx-1"
+          onClick={() => navigate(ruta)}
+        >
+          <FontAwesomeIcon icon={faXmark} style={{ marginRight: "5px" }} />
+          Cancelar
+        </Button>
       </Contenedor>
       <Footer />
     </>
   );
-
 }

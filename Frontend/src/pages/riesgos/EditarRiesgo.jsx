@@ -170,6 +170,7 @@ export default function EditarRiesgo() {
                   label={item.nombre}
                   value={item.id_usuario}
                   name="responsables"
+                  className="text-base"
                   onChange={handleChangeCheck}
                   isInvalid={error.responsables}
                   checked={

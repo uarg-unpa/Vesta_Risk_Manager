@@ -152,4 +152,15 @@ class Incidencia
         $resultado = $stmt->get_result()->fetch_assoc();
         return $resultado;
     }
+
+    public function obtenerIdProyecto($id_incidencia)
+    {
+        $query = "SELECT id_proyecto
+        FROM incidencia
+        WHERE id_incidencia = ?";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("i", $id_incidencia);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
 }

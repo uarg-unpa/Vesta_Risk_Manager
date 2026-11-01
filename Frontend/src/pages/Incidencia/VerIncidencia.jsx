@@ -2,7 +2,7 @@ import React from 'react'
 import NavegadorLider from '../../components/NavegadorLider'
 import Footer from '../../components/Footer'
 import Contenedor from '../../components/Contenedor'
-import { useLoaderData, useLocation } from 'react-router-dom';
+import { useLoaderData, useLocation, useParams } from 'react-router-dom';
 import BotonSalir from '../../components/BotonSalir';
 import { formatearFecha, formatearFechaHora } from '../../utils/funciones';
 import { Alert } from "@/components/ui";
@@ -11,12 +11,14 @@ import { useUsuario } from '../../context/usuarioContext';
 export default function VerIncidencia() {
     const location = useLocation();
     const { incidencia, iteracion } = useLoaderData();
+    const { id_proyecto } = useParams();
     
-    const ruta = location.state?.ruta;
-    const proyecto = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
+    const tipoUsuario = location.pathname.includes("desarrollador") ? "desarrollador" : "lider";
+    const ruta = location.state?.ruta || `/inicio/proyecto/${tipoUsuario}/${id_proyecto}/monitoreo/incidencias`;
+    const proyecto = JSON.parse(localStorage.getItem("proyecto_seleccionado")) ?? { nombre: "Proyecto" };
 
-    const { usuario } = useUsuario();
-      const comprobacionEspectador = usuario.nombre_perfil === "Espectador" || usuario.nombre_perfil === "Administrador";
+      const { usuario } = useUsuario();
+      const comprobacionEspectador = usuario?.nombre_perfil === "Espectador" || usuario?.nombre_perfil === "Administrador";
 
   return (
     <>
@@ -35,7 +37,9 @@ export default function VerIncidencia() {
     <Contenedor>
         <>
             <h3>{proyecto.nombre} - Incidencia del Riesgo {incidencia.id_riesgo < 10 ? "RK0" + incidencia.id_riesgo : "RK" + incidencia.id_riesgo}</h3>
-            <h4>{iteracion.nombre} - {formatearFecha(iteracion.fecha_inicio)} al {formatearFecha(iteracion.fecha_fin)}</h4>
+            {iteracion ? (
+              <h4>{iteracion.nombre} - {formatearFecha(iteracion.fecha_inicio)} al {formatearFecha(iteracion.fecha_fin)}</h4>
+            ) : null}
         </>
         <>
         <h4>Descripción de la incidencia</h4>
