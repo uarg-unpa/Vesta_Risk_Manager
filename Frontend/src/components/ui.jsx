@@ -11,11 +11,12 @@ const buttonVariants = {
   warning: "border border-yellow-400 bg-yellow-400 text-black hover:border-yellow-500 hover:bg-yellow-500 focus-visible:ring-yellow-400",
   light: "border border-slate-200 bg-slate-100 text-slate-900 hover:border-slate-300 hover:bg-slate-200 focus-visible:ring-slate-400",
   dark: "border border-slate-800 bg-slate-800 text-white hover:border-slate-900 hover:bg-slate-900 focus-visible:ring-slate-500",
-  "outline-primary": "border border-blue-600 bg-transparent text-blue-600 hover:bg-blue-600 hover:text-white focus-visible:ring-blue-500",
-  "outline-success": "border border-emerald-600 bg-transparent text-emerald-600 hover:bg-emerald-600 hover:text-white focus-visible:ring-emerald-500",
-  "outline-danger": "border border-red-600 bg-transparent text-red-600 hover:bg-red-600 hover:text-white focus-visible:ring-red-500",
-  "outline-warning": "border border-yellow-400 bg-transparent text-yellow-600 hover:bg-yellow-400 hover:text-black focus-visible:ring-yellow-400",
-  "outline-secondary": "border border-slate-500 bg-transparent text-slate-600 hover:bg-slate-500 hover:text-white focus-visible:ring-slate-500",
+  "outline-primary": "border border-blue-600 bg-transparent text-blue-600 hover:bg-blue-600 hover:text-white focus-visible:ring-blue-500 dark:border-blue-400 dark:text-blue-300 dark:hover:bg-blue-500 dark:hover:text-white",
+  "outline-success": "border border-emerald-600 bg-transparent text-emerald-600 hover:bg-emerald-600 hover:text-white focus-visible:ring-emerald-500 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-500 dark:hover:text-white",
+  "outline-danger": "border border-red-600 bg-transparent text-red-600 hover:bg-red-600 hover:text-white focus-visible:ring-red-500 dark:border-red-400 dark:text-red-300 dark:hover:bg-red-500 dark:hover:text-white",
+  "outline-warning": "border border-yellow-400 bg-transparent text-yellow-600 hover:bg-yellow-400 hover:text-black focus-visible:ring-yellow-400 dark:border-yellow-300 dark:text-yellow-200 dark:hover:bg-yellow-400 dark:hover:text-slate-900",
+  "outline-secondary": "border border-slate-500 bg-transparent text-slate-600 hover:bg-slate-500 hover:text-white focus-visible:ring-slate-500 dark:border-slate-300 dark:text-slate-200 dark:hover:bg-slate-500 dark:hover:text-white",
+  "outline-dark": "border border-slate-700 bg-transparent text-slate-700 hover:bg-slate-700 hover:text-white focus-visible:ring-slate-500 dark:border-slate-300 dark:text-slate-200 dark:hover:bg-slate-500 dark:hover:text-white",
 };
 
 export function Button({ variant = "primary", size, className, children, href, ...props }) {
@@ -39,10 +40,10 @@ export function Button({ variant = "primary", size, className, children, href, .
 
 export function Alert({ variant = "primary", className, children, ...props }) {
   const variants = {
-    primary: "border-blue-200 bg-blue-100 text-blue-900",
-    success: "border-emerald-200 bg-emerald-100 text-emerald-900",
-    danger: "border-red-200 bg-red-100 text-red-900",
-    warning: "border-yellow-200 bg-yellow-100 text-yellow-950",
+    primary: "border-blue-200 bg-blue-100 text-blue-900 dark:border-blue-700 dark:bg-blue-900/70 dark:text-blue-100",
+    success: "border-emerald-200 bg-emerald-100 text-emerald-900 dark:border-emerald-700 dark:bg-emerald-900/70 dark:text-emerald-100",
+    danger: "border-red-200 bg-red-100 text-red-900 dark:border-red-700 dark:bg-red-900/70 dark:text-red-100",
+    warning: "border-yellow-200 bg-yellow-100 text-yellow-950 dark:border-yellow-700 dark:bg-yellow-900/70 dark:text-yellow-100",
   };
   return <div role="alert" className={cx("mb-4 rounded-md border px-4 py-3", variants[variant], className)} {...props}>{children}</div>;
 }
@@ -214,7 +215,7 @@ export function Tooltip({ children, ...props }) { return <span role="tooltip" {.
 const NavbarContext = createContext(null);
 function NavbarRoot({ className, children, bg, variant, expand, ...props }) {
   const [open, setOpen] = useState(false);
-  return <NavbarContext.Provider value={{ open, setOpen }}><nav className={cx("w-full py-4", bg === "dark" && "bg-[#212529]", variant === "dark" && "text-white", className)} {...props}>{children}</nav></NavbarContext.Provider>;
+  return <NavbarContext.Provider value={{ open, setOpen }}><nav className={cx("w-full py-4", bg === "dark" && "bg-[#212529] dark:bg-[#374151]", variant === "dark" && "text-white", className)} {...props}>{children}</nav></NavbarContext.Provider>;
 }
 NavbarRoot.Brand = ({ className, children, ...props }) => <a className={cx("flex shrink-0 items-center whitespace-nowrap text-xl font-normal leading-6 text-white no-underline", className)} {...props}>{children}</a>;
 NavbarRoot.Toggle = ({ className, ...props }) => { const { open, setOpen } = useContext(NavbarContext); return <button type="button" aria-label="Abrir menú" aria-expanded={open} className={cx("rounded border border-slate-500 px-3 py-2 text-white lg:hidden", className)} onClick={() => setOpen(!open)} {...props}>☰</button>; };
@@ -232,5 +233,5 @@ PaginationRoot.First = ({ disabled, onClick }) => <button type="button" classNam
 PaginationRoot.Prev = ({ disabled, onClick }) => <button type="button" className={pageButton} disabled={disabled} onClick={onClick} aria-label="Página anterior">‹</button>;
 PaginationRoot.Next = ({ disabled, onClick }) => <button type="button" className={pageButton} disabled={disabled} onClick={onClick} aria-label="Página siguiente">›</button>;
 PaginationRoot.Last = ({ disabled, onClick }) => <button type="button" className={pageButton} disabled={disabled} onClick={onClick} aria-label="Última página">»</button>;
-PaginationRoot.Item = ({ active, children, onClick }) => <button type="button" className={cx(pageButton, active && "bg-blue-600 text-white")} aria-current={active ? "page" : undefined} onClick={onClick}>{children}</button>;
+PaginationRoot.Item = ({ active, children, onClick }) => <button type="button" className={cx(pageButton, active ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white" : "text-slate-700 dark:text-slate-200")} aria-current={active ? "page" : undefined} onClick={onClick}>{children}</button>;
 export const Pagination = PaginationRoot;

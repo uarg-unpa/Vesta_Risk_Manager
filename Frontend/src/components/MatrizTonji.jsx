@@ -8,6 +8,7 @@ import {
   Legend,
 } from 'chart.js';
 import React, {useRef, forwardRef, useImperativeHandle} from 'react';
+import { useTema } from '../context/temaContext';
 
 ChartJS.register(PointElement, LinearScale, Title, Tooltip, Legend);
   
@@ -46,37 +47,38 @@ ChartJS.register(PointElement, LinearScale, Title, Tooltip, Legend);
   };
   
   
-  const options = {
-    responsive: false,
-    scales: {
-      x: {
-        min: 0,
-        max: 11,
-        ticks: { stepSize: 1 },
-        title: { display: true, text: 'Impacto' },
-      },
-      y: {
-        min: 0,
-        max: 11,
-        ticks: { stepSize: 1 },
-        title: { display: true, text: 'Probabilidad' },
-      },
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: (context) =>{
-            const punto = context.raw;
-            return `${punto.label}, Impacto: ${punto.x}, Probabilidad: ${punto.y}`;
-          }
-        },
-      },
-    },
-  };
-  
   function MantrizTonji({puntos}, ref) {
     const scatterRef = useRef(null);
+    const { temaOscuro } = useTema();
+    const colorTexto = temaOscuro ? '#f3f4f6' : '#1f2937';
+    const options = {
+      responsive: false,
+      scales: {
+        x: {
+          min: 0,
+          max: 11,
+          ticks: { stepSize: 1, color: colorTexto },
+          title: { display: true, text: 'Impacto', color: colorTexto },
+        },
+        y: {
+          min: 0,
+          max: 11,
+          ticks: { stepSize: 1, color: colorTexto },
+          title: { display: true, text: 'Probabilidad', color: colorTexto },
+        },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context) =>{
+              const punto = context.raw;
+              return `${punto.label}, Impacto: ${punto.x}, Probabilidad: ${punto.y}`;
+            }
+          },
+        },
+      },
+    };
 
     useImperativeHandle(ref, ()=>({
       getScatterRef: () => scatterRef.current

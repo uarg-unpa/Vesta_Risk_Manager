@@ -11,6 +11,7 @@ import BotonSalir from '../../components/BotonSalir'
 import { useState } from 'react'
 import Paginado from '../../components/Paginado'
 import { useUsuario } from '../../context/usuarioContext'
+import { useTema } from '../../context/temaContext'
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function SeguimientoRiesgo() {
@@ -31,6 +32,15 @@ export default function SeguimientoRiesgo() {
     const riesgos_cargados = riesgos.slice(indice_inicio, indice_fin);
 
     const { usuario } = useUsuario();
+    const { temaOscuro } = useTema();
+    const colorTextoGrafico = temaOscuro ? "#f3f4f6" : "#1f2937";
+    const colorBordeGrafico = temaOscuro ? "#e5e7eb" : "#ffffff";
+    const coloresEstado = temaOscuro
+        ? ["#64748b", "#818cf8", "#34d399"]
+        : ["#B0BEC5", "#5C6BC0", "#26A69A"];
+    const coloresPrioridad = temaOscuro
+        ? ["#94a3b8", "#7dd3fc", "#fde047", "#fb923c", "#f87171"]
+        : ["#90A4AE", "#81D4FA", "#FFEB3B", "#FF7043", "#E53935"];
   const comprobacionEspectador = usuario.nombre_perfil === "Espectador" || usuario.nombre_perfil === "Administrador";
     
   return (
@@ -64,16 +74,18 @@ export default function SeguimientoRiesgo() {
                                     datasets:[
                                         {
                                             data:estado,
-                                            backgroundColor: ['#B0BEC5', '#5C6BC0', '#26A69A'],
-                                            borderWidth:1
+                                            backgroundColor: coloresEstado,
+                                            borderColor: colorBordeGrafico,
+                                            borderWidth: 2
                                         }
                                     ]
                                 }
                             }
-                            options={
-                                {
-                                    responsive: false,
-                                }
+                                options={
+                                 {
+                                     responsive: false,
+                                     plugins: { legend: { labels: { color: colorTextoGrafico } } },
+                                 }
                             } 
                             height={250} 
                             width={400}
@@ -99,16 +111,18 @@ export default function SeguimientoRiesgo() {
                                     datasets:[
                                         {
                                             data:prioridad,
-                                            backgroundColor: ['#90A4AE', '#81D4FA', '#FFEB3B','#FF7043','#E53935'],
-                                            borderWidth:1
+                                            backgroundColor: coloresPrioridad,
+                                            borderColor: colorBordeGrafico,
+                                            borderWidth: 2
                                         }
                                     ]
                                 }
                             }
-                            options={
-                                {
-                                    responsive: false,
-                                }
+                                options={
+                                 {
+                                     responsive: false,
+                                     plugins: { legend: { labels: { color: colorTextoGrafico } } },
+                                 }
                             } 
                             height={250} 
                             width={400}

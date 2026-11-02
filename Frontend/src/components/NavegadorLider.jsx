@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useUsuario } from "../context/usuarioContext";
+import { useTema } from "../context/temaContext";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { URL_BASE } from "../utils/funciones";
 
@@ -27,6 +28,7 @@ export default function NavegadorLider() {
   const comprobacionLider = location.pathname.includes("lider");
 
   const { usuario } = useUsuario();
+  const { temaOscuro, setTemaOscuro } = useTema();
   const proyecto = JSON.parse(localStorage.getItem("proyecto_seleccionado"));
   const idProyecto = proyecto?.id_proyecto ?? idProyectoRuta;
   if (usuario.nombre_perfil === "Espectador" || usuario.nombre_perfil === "Administrador") {
@@ -77,13 +79,23 @@ export default function NavegadorLider() {
               Salir
             </Nav.Link>
 
-            <Nav.Link href={`${URL_BASE}/salir`}>
+             <Nav.Link href={`${URL_BASE}/salir`}>
               <FontAwesomeIcon
                 icon={faArrowRightFromBracket}
                 className="mx-2"
               />
-              Cerrar Sesión
-            </Nav.Link>
+               Cerrar Sesión
+             </Nav.Link>
+             <Nav.Link
+               href="#tema"
+               onClick={(event) => {
+                 event.preventDefault();
+                 setTemaOscuro(!temaOscuro);
+               }}
+               aria-label="Cambiar tema"
+             >
+               {temaOscuro ? "☀️ Modo claro" : "🌙 Modo oscuro"}
+             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
@@ -156,6 +168,16 @@ export default function NavegadorLider() {
                   className="mx-2"
                 />
                 Cerrar Sesión
+              </Nav.Link>
+              <Nav.Link
+                href="#tema"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setTemaOscuro(!temaOscuro);
+                }}
+                aria-label="Cambiar tema"
+              >
+                {temaOscuro ? "☀️ Modo claro" : "🌙 Modo oscuro"}
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>

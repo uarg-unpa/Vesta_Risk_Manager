@@ -30,7 +30,7 @@ export default function Footer() {
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 5px",
         }}
-        className="flex shrink-0 items-center justify-center bg-[#212529]"
+        className="flex shrink-0 items-center justify-center bg-[#212529] dark:bg-[#374151]"
       >
         <p className="text-white">
           <FontAwesomeIcon
@@ -40,7 +40,7 @@ export default function Footer() {
           {usuario.nombre_usuario + " "}
           <a
             href="/"
-            className="text-blue-600 underline hover:text-blue-800"
+            className="text-blue-600 underline hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
             onClick={() => {
               localStorage.removeItem("usuario");
             }}
@@ -63,7 +63,7 @@ export default function Footer() {
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 5px",
         }}
-        className="block shrink-0 bg-[#212529]"
+        className="block shrink-0 bg-[#212529] dark:bg-[#374151]"
       ></footer>
     );
   }

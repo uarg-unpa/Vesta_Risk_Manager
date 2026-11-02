@@ -678,7 +678,7 @@ export default function CrearProyecto() {
               Agregar Participante
             </Button>
             <Table size="sm" hover className="mt-2">
-              <thead className="bg-[#cff4fc]">
+              <thead className="bg-[#cff4fc] text-slate-900 dark:bg-[#24527a] dark:text-slate-100">
                 <tr>
                   <th className="text-center">Participantes</th>
                   <th className="text-center">Rol</th>
@@ -752,7 +752,7 @@ export default function CrearProyecto() {
               Agregar Iteración
             </Button>
             <Table size="sm" hover className="mt-2">
-              <thead className="bg-[#cff4fc]">
+              <thead className="bg-[#cff4fc] text-slate-900 dark:bg-[#24527a] dark:text-slate-100">
                 <tr>
                   <th className="text-center">Nombre</th>
                   <th className="text-center">Fecha de inicio</th>
@@ -827,7 +827,7 @@ export default function CrearProyecto() {
                 Agregar Categoria
               </Button> */}
             <Table size="sm" hover className="mt-2">
-              <thead className="bg-[#cff4fc]">
+              <thead className="bg-[#cff4fc] text-slate-900 dark:bg-[#24527a] dark:text-slate-100">
                 <tr>
                   <th className="text-center">Nombre</th>
                   <th className="text-center">Descripción</th>

@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 import { useUsuario } from "../context/usuarioContext";
+import { useTema } from "../context/temaContext";
 import { URL_BASE } from "../utils/funciones"; 
 
 /**
@@ -25,6 +26,7 @@ import { URL_BASE } from "../utils/funciones";
 export default function Navegador() {
   const location = useLocation();
   const { usuario } = useUsuario();
+  const { temaOscuro, setTemaOscuro } = useTema();
   if (location.pathname.includes("inicio")) {
     return (
       <Navbar
@@ -70,6 +72,16 @@ export default function Navegador() {
                 />
                 Cerrar Sesión
               </Nav.Link>
+              <Nav.Link
+                href="#tema"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setTemaOscuro(!temaOscuro);
+                }}
+                aria-label="Cambiar tema"
+              >
+                {temaOscuro ? "☀️ Modo claro" : "🌙 Modo oscuro"}
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -88,6 +100,18 @@ export default function Navegador() {
             <Figure.Image src={logoVesta} width={80} className="mr-2 self-center" />
             Vesta Risk Manager
           </Navbar.Brand>
+          <Nav className="ml-auto">
+            <Nav.Link
+              href="#tema"
+              onClick={(event) => {
+                event.preventDefault();
+                setTemaOscuro(!temaOscuro);
+              }}
+              aria-label="Cambiar tema"
+            >
+              {temaOscuro ? "☀️ Modo claro" : "🌙 Modo oscuro"}
+            </Nav.Link>
+          </Nav>
         </Container>
       </Navbar>
     );

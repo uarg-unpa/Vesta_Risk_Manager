@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
 }
@@ -10,6 +12,91 @@
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
+  }
+
+  html.dark body {
+    background-color: #1f2937;
+    color: #f3f4f6;
+  }
+
+  html.dark .bg-white {
+    background-color: #374151 !important;
+  }
+
+  html.dark .bg-slate-50,
+  html.dark .bg-slate-100 {
+    background-color: #4b5563 !important;
+  }
+
+  html.dark .text-slate-900,
+  html.dark .text-slate-800 {
+    color: #f1f5f9 !important;
+  }
+
+  html.dark .text-slate-700,
+  html.dark .text-slate-600,
+  html.dark .text-slate-500 {
+    color: #cbd5e1 !important;
+  }
+
+  html.dark .border-slate-300,
+  html.dark .border-slate-400 {
+    border-color: #6b7280 !important;
+  }
+
+  html.dark input,
+  html.dark select,
+  html.dark textarea {
+    background-color: #374151 !important;
+    color: #f1f5f9 !important;
+    border-color: #64748b !important;
+  }
+
+  html.dark input::placeholder,
+  html.dark textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  html.dark .hover\:bg-slate-100:hover,
+  html.dark .hover\:bg-slate-50:hover {
+    background-color: #4b5563 !important;
+  }
+
+  html.dark .hover\:bg-slate-200:hover {
+    background-color: #6b7280 !important;
+  }
+
+  html.dark .hover\:text-white:hover {
+    color: #fff !important;
+  }
+
+  html.dark table tbody tr:hover {
+    background-color: #4b5563 !important;
+  }
+
+  html.dark [role="menu"] {
+    background-color: #374151 !important;
+    color: #f1f5f9 !important;
+    border-color: #6b7280 !important;
+  }
+
+  html.dark [role="menuitem"] {
+    color: #e2e8f0 !important;
+  }
+
+  html.dark [role="menuitem"]:hover {
+    background-color: #4b5563 !important;
+    color: #fff !important;
+  }
+
+  html.dark nav,
+  html.dark footer {
+    background-color: #374151 !important;
+  }
+
+  button[aria-current="page"]:hover {
+    background-color: #1d4ed8 !important;
+    color: #fff !important;
   }
 
   #root {

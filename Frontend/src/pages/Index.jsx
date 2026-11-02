@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { login, obtenerUsuariosCorreo } from "../services/usuarios";
 import { useUsuario } from "../context/usuarioContext";
+import { useTema } from "../context/temaContext";
 import { createDemoToken, DEMO_MODE, DEMO_USERS } from "../utils/demoMode";
 
 
@@ -15,6 +16,7 @@ export default function Index() {
   const [error, setError] = useState(false);
   const [demoRole, setDemoRole] = useState("Administrador");
   const { iniciarSesion } = useUsuario();
+  const { temaOscuro } = useTema();
   const navigation = useNavigate();
 
   return (
@@ -49,6 +51,7 @@ export default function Index() {
             </Alert>
           )}
           <GoogleLogin
+            theme={temaOscuro ? "filled_black" : "outline"}
             onSuccess={async (credentialResponse) => {
               const decode = jwtDecode(credentialResponse.credential);
               const {jwt} = await login({correo:decode.email})

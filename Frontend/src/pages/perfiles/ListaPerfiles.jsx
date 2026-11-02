@@ -26,7 +26,7 @@ export default function ListaPerfiles() {
             Nuevo perfil
           </Button> */}
           <Table size="sm" hover className="mt-2">
-            <thead className="bg-[#cff4fc]">
+            <thead className="bg-[#cff4fc] text-slate-900 dark:bg-[#24527a] dark:text-slate-100">
               <tr>
                 <th className="text-center">Perfiles</th>
                 {/* <th>Opciones</th> */}

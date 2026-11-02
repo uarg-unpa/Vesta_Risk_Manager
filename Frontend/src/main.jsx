@@ -21,6 +21,7 @@ import VerUsuario from "./pages/usuarios/VerUsuario.jsx";
 import ModificarUsuario from "./pages/usuarios/ModificarUsuario.jsx";
 // import EliminarUsuario from "./pages/usuarios/EliminarUsuario.jsx";
 import { UsuarioProvider } from "./context/usuarioContext.jsx";
+import { TemaProvider } from "./context/temaContext.jsx";
 import ListaPerfiles from "./pages/perfiles/ListaPerfiles.jsx";
 // import CrearPerfil from "./pages/perfiles/CrearPerfil.jsx";
 // import VerPerfil, { cargarPerfilId } from "./pages/perfiles/VerPerfil.jsx";
@@ -515,9 +516,11 @@ const App = () => {
 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <UsuarioProvider>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <App />
-      </GoogleOAuthProvider>
-    </UsuarioProvider>
+    <TemaProvider>
+      <UsuarioProvider>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <App />
+        </GoogleOAuthProvider>
+      </UsuarioProvider>
+    </TemaProvider>
 );

@@ -32,6 +32,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import "../../../styles/BotonDescarga.css";
 import { useUsuario } from "../../../context/usuarioContext";
+import { useTema } from "../../../context/temaContext";
 import { useState } from "react";
 import { width } from "@fortawesome/free-brands-svg-icons/fa42Group";
 
@@ -179,6 +180,9 @@ export default function VerProyectoLider() {
   };
 
   const { usuario } = useUsuario();
+  const { temaOscuro } = useTema();
+  const colorTextoGrafico = temaOscuro ? "#f3f4f6" : "#1f2937";
+  const colorLineasGrafico = temaOscuro ? "#6b7280" : "#cbd5e1";
   const comprobacionEspectador =
     usuario.nombre_perfil === "Espectador" || usuario.nombre_perfil === "Administrador";
 
@@ -298,6 +302,7 @@ export default function VerProyectoLider() {
                             legend: {
                               position: "right",
                               reverse: true,
+                              labels: { color: colorTextoGrafico },
                             },
                             tooltip: {
                               callbacks: {
@@ -319,12 +324,16 @@ export default function VerProyectoLider() {
                               title: {
                                 display: true,
                                 text: "Iteraciones",
+                                color: colorTextoGrafico,
                               },
                               ticks: {
                                 autoSkip: false,
                                 maxRotation: 0,
                                 minRotation: 0,
+                                color: colorTextoGrafico,
                               },
+                              grid: { color: colorLineasGrafico, lineWidth: 1.2 },
+                              border: { color: colorLineasGrafico, width: 1.5 },
                             },
                             y: {
                               stacked: true,
@@ -332,7 +341,11 @@ export default function VerProyectoLider() {
                               title: {
                                 display: true,
                                 text: "Cantidad de riesgos",
+                                color: colorTextoGrafico,
                               },
+                              ticks: { color: colorTextoGrafico },
+                              grid: { color: colorLineasGrafico, lineWidth: 1.2 },
+                              border: { color: colorLineasGrafico, width: 1.5 },
                             },
                           },
                         }}
@@ -373,7 +386,7 @@ export default function VerProyectoLider() {
                     options={{
                       responsive: false,
                       plugins: {
-                        legend: { display: false },
+                         legend: { display: false, labels: { color: colorTextoGrafico } },
                         tooltip: { enabled: false },
                       },
                       scales: {
@@ -381,7 +394,11 @@ export default function VerProyectoLider() {
                           min: 0,
                           ticks: {
                             display: false,
+                            color: colorTextoGrafico,
                           },
+                          pointLabels: { color: colorTextoGrafico },
+                          grid: { color: colorLineasGrafico, lineWidth: 1.2 },
+                          angleLines: { color: colorLineasGrafico, lineWidth: 1.2 },
                         },
                       },
                     }}
