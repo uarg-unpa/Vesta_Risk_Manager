@@ -92,7 +92,7 @@ function extractToken($authorizationHeader)
 
 function generarJWT($usuario)
 {
-    $key = $_ENV['JWT_SECRET'];
+    $key = getenv('JWT_SECRET');
     $payload = $usuario;
     $token = JWT::encode($payload, $key, "HS256");
 
@@ -112,7 +112,7 @@ function decodificarJWT()
         return false;
     }
     try {
-        $key = $_ENV['JWT_SECRET'];
+        $key = getenv('JWT_SECRET');
         $decode = JWT::decode($JWT, new Key($key, "HS256"));
         return $decode;
     } catch (Exception $e) {

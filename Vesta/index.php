@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
+
 // ---------------------------------------------------------------------------
 // CORS
 // No se puede combinar "Access-Control-Allow-Origin: *" con
