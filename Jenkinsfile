@@ -59,35 +59,37 @@ pipeline {
         }
 
         stage('Backup'){
-            withCredentials([
-                    sshUserPrivateKey(
-                        credentialsId: 'deploy',
-                        keyFileVariable: 'SSH_KEY',
-                        usernameVariable: 'SSH_USER'
-                    ),
-                    string(
-                        credentialsId: 'servidor-vps',
-                        variable: 'SSH_HOST'
-                    )
-                ]){
-                    sh '''
-                        set -eu
+            steps{
+                withCredentials([
+                        sshUserPrivateKey(
+                            credentialsId: 'deploy',
+                            keyFileVariable: 'SSH_KEY',
+                            usernameVariable: 'SSH_USER'
+                        ),
+                        string(
+                            credentialsId: 'servidor-vps',
+                            variable: 'SSH_HOST'
+                        )
+                    ]){
+                        sh '''
+                            set -eu
 
-                        BACKUP_DATE=$(date +%Y_%m_%d)
-                        ssh -i "$SSH_KEY" \
-                            -o IdentitiesOnly=yes \
-                            -o StrictHostKeyChecking=yes \
-                            -p "$SSH_PORT" \
-                            "$SSH_USER@$SSH_HOST" \
-                            "set -eu
-                            mkdir -p '$BACKUP_DIR/$BACKUP_DATE'
-                            rsync -a \
-                            '$REMOTE_DIR/' \
-                            '$BACKUP_DIR/$BACKUP_DATE/'"
+                            BACKUP_DATE=$(TZ=America/Argentina/Buenos_Aires date +%Y_%m_%d)
 
-                        echo "Backup creado: $BACKUP_DATE"
-                    '''
+                            mkdir -p "$BACKUP_DIR/$BACKUP_DATE"
+
+                            rsync -avz \
+                                -e "ssh -i $SSH_KEY \
+                                    -o IdentitiesOnly=yes \
+                                    -o StrictHostKeyChecking=yes \
+                                    -p $SSH_PORT" \
+                                "$SSH_USER@$SSH_HOST:$REMOTE_DIR/" \
+                                "$BACKUP_DIR/$BACKUP_DATE/"
+
+                            echo "Backup local creado: $BACKUP_DIR/$BACKUP_DATE"
+                        '''
                 }
+            }
         }
 
         stage('Transferir al VPS') {
@@ -103,7 +105,7 @@ pipeline {
                         variable: 'SSH_HOST'
                     ),
                     file(
-                        credentialsId: 'env-backend-vesta',
+                        credentialsId: '.env-backend-vesta',
                         variable: 'BACKEND_ENV'
                     )
                 ]) {
@@ -129,7 +131,7 @@ pipeline {
                             -o StrictHostKeyChecking=yes \
                             -p $SSH_PORT" \
                         "$BACKEND_ENV" \
-                        "$SSH_USER@$SSH_HOST:$REMOTE_DIR/backend/.env"
+                        "$SSH_USER@$SSH_HOST:$REMOTE_DIR/.env"
 
                     '''
                 }
@@ -138,32 +140,34 @@ pipeline {
 
 
         stage('Despliegue con Docker Compose'){
-            withCredentials([
-                    sshUserPrivateKey(
-                        credentialsId: 'deploy',
-                        keyFileVariable: 'SSH_KEY',
-                        usernameVariable: 'SSH_USER'
-                    ),
-                    string(
-                        credentialsId: 'servidor-vps',
-                        variable: 'SSH_HOST'
-                    )
-                ]) {
-                    sh '''
-                        set -eu
+            steps{
+                withCredentials([
+                        sshUserPrivateKey(
+                            credentialsId: 'deploy',
+                            keyFileVariable: 'SSH_KEY',
+                            usernameVariable: 'SSH_USER'
+                        ),
+                        string(
+                            credentialsId: 'servidor-vps',
+                            variable: 'SSH_HOST'
+                        )
+                    ]) {
+                        sh '''
+                            set -eu
 
-                        ssh -i "$SSH_KEY" \
-                            -o IdentitiesOnly=yes \
-                            -o StrictHostKeyChecking=yes \
-                            -p "$SSH_PORT" \
-                            "$SSH_USER@$SSH_HOST" \
-                            "set -eu
-                            cd '$REMOTE_DIR'
-                            docker compose config --quiet
-                            docker compose up -d --build --remove-orphans
-                            docker compose ps"
-                    '''
-                }
+                            ssh -i "$SSH_KEY" \
+                                -o IdentitiesOnly=yes \
+                                -o StrictHostKeyChecking=yes \
+                                -p "$SSH_PORT" \
+                                "$SSH_USER@$SSH_HOST" \
+                                "set -eu
+                                cd '$REMOTE_DIR'
+                                docker compose config --quiet
+                                docker compose up -d --build --remove-orphans
+                                docker compose ps"
+                        '''
+                    }
+            }
         }
     }
 

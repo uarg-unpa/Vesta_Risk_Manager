@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
 /**
  * Description of BDConexion
  * 
@@ -19,12 +18,10 @@ class BDConexion extends mysqli
 
     function __construct()
     {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/..");
-        $dotenv->load();
-        $this->host = $_ENV['DB_HOST'];
-        $this->usuario = $_ENV['DB_USER'];
-        $this->contrasenia = $_ENV['DB_PASS'];
-        $this->schema = $_ENV['DB_NAME'];
+        $this->host = getenv('DB_HOST');
+        $this->usuario = getenv('DB_USER');
+        $this->contrasenia = getenv('DB_PASS');
+        $this->schema = getenv('DB_NAME');
 
         parent::connect($this->host, $this->usuario, $this->contrasenia, $this->schema);
 

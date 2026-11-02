@@ -6,7 +6,7 @@ require_once __DIR__ . "/../utils/auth.php";
 require_once "router.php";
 
 $router = new Router();
-$router->setBase('Vesta');
+$router->setBase('api');
 
 $controladorUsuario = new GestorUsuario();
 $controladorProyecto = new GestorProyecto();
