@@ -1,0 +1,19 @@
+services:
+  vesta:
+    build: .
+    container_name: vesta
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    networks:
+      - proxy
+      - databases
+
+networks:
+  proxy:
+    external: true
+
+  databases:
+    external: true

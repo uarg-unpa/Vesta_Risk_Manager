@@ -3,7 +3,7 @@ require_once __DIR__ . "/../controllers/gestorUsuario.php";
 require_once __DIR__ . "/../controllers/gestorProyecto.php";
 require_once __DIR__ . "/../controllers/gestorRiesgo.php";
 require_once __DIR__ . "/../utils/auth.php";
-require_once "router.php";
+require_once __DIR__ . "/router.php";
 
 $router = new Router();
 $router->setBase('api');
