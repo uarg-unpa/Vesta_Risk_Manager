@@ -25,6 +25,13 @@ $router->add("POST", "login", function () use ($controladorUsuario) {
     }
     $data = json_decode($body, true);
     $resultado = $controladorUsuario->iniciarSesion($data);
+    if ($resultado === null) {
+        http_response_code(401);
+        echo json_encode([
+            "error" => "El token de Google no es válido o el usuario no está registrado."
+        ]);
+        return;
+    }
     echo json_encode(["jwt" => $resultado]);
 });
 

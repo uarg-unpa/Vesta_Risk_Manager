@@ -5,8 +5,7 @@ import Contenedor from "../components/Contenedor";
 import Navegador from "../components/Navegador";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { login, obtenerUsuariosCorreo } from "../services/usuarios";
+import { login } from "../services/usuarios";
 import { useUsuario } from "../context/usuarioContext";
 import { useTema } from "../context/temaContext";
 import { createDemoToken, DEMO_MODE, DEMO_USERS } from "../utils/demoMode";
@@ -53,30 +52,14 @@ export default function Index() {
           <GoogleLogin
             theme={temaOscuro ? "filled_black" : "outline"}
             onSuccess={async (credentialResponse) => {
-              const decode = jwtDecode(credentialResponse.credential);
-              const {jwt} = await login({correo:decode.email})
+              const { jwt } = await login({ credential: credentialResponse.credential });
               if (!jwt) {
                 setError(true)
+                return;
               }
               iniciarSesion(jwt)
               navigation("/inicio");
               setError(false);
-
-              
-
-              // obtenerUsuariosCorreo(decode.email).then((item) => {
-              //   if (item) {
-              //     localStorage.setItem("jwt", credentialResponse.credential);
-              //     iniciarSesion(
-              //       item.id_usuario,
-              //       item.nombre_usuario,
-              //       item.email,
-              //       item.nombre_perfil
-              //     );
-              //   } else {
-              //     setError(true);
-              //   }
-              // });
             }}
             onError={() => {
               setError(true);

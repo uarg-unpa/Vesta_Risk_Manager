@@ -4,6 +4,7 @@ require_once __DIR__ . "/../controllers/gestorProyecto.php";
 require_once __DIR__ . "/validacionContext.php";
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\JWK;
 use Firebase\JWT\Key;
 
 function getAuthorizationHeader()
@@ -28,66 +29,64 @@ function extractToken($authorizationHeader)
     return null;
 }
 
-// function decodeJWTGoogle($jwt)
-// {
-//     // Divide el JWT en sus partes: header, payload y signature
-//     list($headerEncoded, $payloadEncoded, $signatureEncoded) = explode('.', $jwt);
+/**
+ * Verifica un ID token emitido por Google y devuelve sus claims.
+ * La firma se valida con las claves públicas que Google publica para sus tokens.
+ */
+function validarJWTGoogle($jwt)
+{
+    if (!is_string($jwt) || trim($jwt) === '') {
+        return false;
+    }
 
-//     // Decodifica el header y el payload
-//     $header = json_decode(base64_decode(strtr($headerEncoded, '-_', '+/')), true);
-//     $payload = json_decode(base64_decode(strtr($payloadEncoded, '-_', '+/')), true);
+    try {
+        $partes = explode('.', $jwt);
+        if (count($partes) !== 3) {
+            return false;
+        }
 
-//     // Retorna el header y el payload
-//     return ['header' => $header, 'payload' => $payload];
-// }
+        $header = json_decode(base64_decode(strtr($partes[0], '-_', '+/')), true);
+        if (!is_array($header) || ($header['typ'] ?? null) !== 'JWT'
+            || ($header['alg'] ?? null) !== 'RS256' || empty($header['kid'])) {
+            return false;
+        }
 
+        $contexto = stream_context_create([
+            'http' => ['timeout' => 5]
+        ]);
+        $respuesta = file_get_contents('https://www.googleapis.com/oauth2/v3/certs', false, $contexto);
+        if ($respuesta === false) {
+            return false;
+        }
 
-// function obtenerClavePublicaGoogle()
-// {
-//     $url = "https://www.googleapis.com/oauth2/v3/certs";
-//     $certificados = json_decode(file_get_contents($url), true);
+        $jwks = json_decode($respuesta, true);
+        if (!is_array($jwks)) {
+            return false;
+        }
 
-//     return $certificados['keys'];
-// }
+        $claves = JWK::parseKeySet($jwks);
+        if (!isset($claves[$header['kid']])) {
+            return false;
+        }
 
-// function validarJWTGoogle($controladorUsuario)
-// {
-//     $autorizacion = getAuthorizationHeader();
+        $claims = JWT::decode($jwt, $claves);
+        $emisoresValidos = ['accounts.google.com', 'https://accounts.google.com'];
+        if (!in_array($claims->iss ?? null, $emisoresValidos, true)
+            || empty($claims->email)
+            || ($claims->email_verified ?? false) !== true) {
+            return false;
+        }
 
-//     if (empty($autorizacion)) {
-//         return false;
-//     }
+        $clientId = getenv('GOOGLE_CLIENT_ID');
+        if ($clientId !== false && $clientId !== '' && ($claims->aud ?? null) !== $clientId) {
+            return false;
+        }
 
-//     $JWT = extractToken($autorizacion);
-//     if (empty($JWT)) {
-//         return false;
-//     }
-
-//     $resultado = decodeJWT($JWT);
-//     if (empty($resultado["header"]) || empty($resultado["payload"])) {
-//         return false;
-//     }
-
-//     if (empty($resultado["header"]["typ"]) || $resultado["header"]["typ"] != "JWT") {
-//         return false;
-//     }
-
-//     if (empty($resultado["header"]["kid"])) {
-//         return false;
-//     }
-
-//     if (empty($resultado["payload"]["email"])) {
-//         return false;
-//     }
-
-//     $usuario = $controladorUsuario->obtenerUsuarioCorreo($resultado["payload"]["email"]);
-
-//     if (empty($usuario)) {
-//         return false;
-//     }
-
-//     return true;
-// }
+        return $claims;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
 
 
 function generarJWT($usuario)

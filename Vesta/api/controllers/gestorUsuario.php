@@ -53,10 +53,13 @@ class GestorUsuario
 
     public function iniciarSesion($data)
     {
-        if (empty($data["correo"])) return null;
-        $correo = $data["correo"];
-        $comprobar = $this->verificarCorreo($correo);
-        if(!$comprobar) return null;
+        if (!is_array($data) || empty($data["credential"])) return null;
+
+        $claimsGoogle = validarJWTGoogle($data["credential"]);
+        if (!$claimsGoogle) return null;
+
+        $correo = $claimsGoogle->email;
+        if (!$this->verificarCorreo($correo)) return null;
 
         $this->usuario->setEmail($correo);
         $resultado = $this->usuario->obtenerUsuarioEmail();
