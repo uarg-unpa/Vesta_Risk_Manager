@@ -8,8 +8,10 @@ services:
       - .env
 
     networks:
-      - proxy
-      - databases
+      proxy: 
+        gw_priority: 100
+      databases:
+        gw_priority: 0
 
 networks:
   proxy:
