@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Contenedor from "../../../components/Contenedor";
 import NavegadorLider from "../../../components/NavegadorLider";
 import Footer from "../../../components/Footer";
@@ -26,6 +26,7 @@ import { completarTarea, obtenerTareasDesarrolladorProyectoPaginado } from "../.
 import BotonSalir from "../../../components/BotonSalir";
 import "./../../../styles/ListaRiesgo.css";
 import Paginado from "../../../components/Paginado";
+import { puedeCompletarTarea } from "../permisosTarea";
 
 export default function ListaTareaDesarrollador() {
   const { tareas,totalPaginas, iteracion } = useLoaderData();
@@ -39,13 +40,15 @@ export default function ListaTareaDesarrollador() {
 
   const [tareasCargadas, setTareasCargadas] = useState(tareas)
   const [paginaActual, setPaginaActual] = useState(1)
+  const tareaParaCompletar = tareasCargadas?.find(tarea => tarea.id_tarea == tareaSeleccionada);
+  const puedeConfirmarCompletar = puedeCompletarTarea(usuario.nombre_perfil, iteracion, tareaParaCompletar);
 
   useEffect(() => {
     obtenerTareasDesarrolladorProyectoPaginado(proyecto.id_proyecto, usuario.id_usuario, paginaActual).then((data) => {
-      const {tareas, _} = data;
+      const { tareas } = data;
       setTareasCargadas(tareas)
     })
-  }, [paginaActual])
+  }, [paginaActual, proyecto.id_proyecto, usuario.id_usuario])
   
 
   return (
@@ -105,10 +108,11 @@ export default function ListaTareaDesarrollador() {
                           style={{ marginRight: "5px" }}
                           variant="outline-success"
                           onClick={()=>{
+                            if (!puedeCompletarTarea(usuario.nombre_perfil, iteracion, tarea)) return;
                             setCompletar(true)
                             setTareaSeleccionada(tarea.id_tarea)
                           }}
-                          className={tarea.estado == '1' ? "hidden":""}
+                          disabled={!puedeCompletarTarea(usuario.nombre_perfil, iteracion, tarea)}
                         >
                           <FontAwesomeIcon icon={faCheck} />
                         </Button>
@@ -163,7 +167,9 @@ export default function ListaTareaDesarrollador() {
             <Modal.Footer>
               <Button
                 variant="outline-success"
+                disabled={!puedeConfirmarCompletar}
                 onClick={async () => {
+                  if (!puedeConfirmarCompletar) return;
                   await completarTarea(tareaSeleccionada)
                   setCompletar(false);
                   navigate(0)

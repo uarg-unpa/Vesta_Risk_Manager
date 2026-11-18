@@ -1,0 +1,21 @@
+services:
+  vesta:
+    build: .
+    container_name: vesta
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    networks:
+      proxy: 
+        gw_priority: 100
+      databases:
+        gw_priority: 0
+
+networks:
+  proxy:
+    external: true
+
+  databases:
+    external: true

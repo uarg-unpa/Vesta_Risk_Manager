@@ -1,4 +1,3 @@
-import React from 'react'
 import NavegadorLider from '../../components/NavegadorLider'
 import Footer from '../../components/Footer'
 import Contenedor from '../../components/Contenedor'
@@ -18,7 +17,7 @@ export default function VerTarea() {
     <Contenedor>
         <>
             <h3>{proyecto.nombre} - Tarea del plan de {tarea.tipo_plan} del Riesgo {tarea.id_riesgo < 10 ? "RK0" + tarea.id_riesgo : "RK" + tarea.id_riesgo}</h3>
-            <h4>{iteracion.nombre} - {formatearFecha(iteracion.fecha_inicio)} al {formatearFecha(iteracion.fecha_fin)}</h4>
+            {iteracion && <h4>{iteracion.nombre} - {formatearFecha(iteracion.fecha_inicio)} al {formatearFecha(iteracion.fecha_fin)}</h4>}
         </>
         <>
         <h4>Nombre de la tarea</h4>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Contenedor from "../../components/Contenedor";
 import NavegadorLider from "../../components/NavegadorLider";
 import Footer from "../../components/Footer";
@@ -29,7 +29,7 @@ import { informeTarea } from "../informes/tareas";
 import BotonSalir from "../../components/BotonSalir";
 import "./../../styles/ListaRiesgo.css";
 import Paginado from "../../components/Paginado";
-import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
+import { puedeCompletarTarea, puedeModificarTarea } from "./permisosTarea";
 
 export default function ListaTarea() {
   const { tareas,totalPaginas, iteracion } = useLoaderData();
@@ -47,12 +47,15 @@ export default function ListaTarea() {
 
   useEffect(() => {
     obtenerTareasProyectoPaginado(proyecto.id_proyecto, usuario.id_usuario, paginaActual).then((data) => {
-      const {tareas, _} = data;
+      const { tareas } = data;
       setTareasCargadas(tareas)
     })
-  }, [paginaActual])
+  }, [paginaActual, proyecto.id_proyecto, usuario.id_usuario])
     
   const comprobacionEspectador = usuario.nombre_perfil === "Espectador" || usuario.nombre_perfil === "Administrador";
+  const puedeModificar = puedeModificarTarea(usuario.nombre_perfil, iteracion);
+  const tareaParaCompletar = tareasCargadas?.find(tarea => tarea.id_tarea == tareaSeleccionada);
+  const puedeConfirmarCompletar = puedeCompletarTarea(usuario.nombre_perfil, iteracion, tareaParaCompletar) && tareaParaCompletar.pertenece != 0;
   
   return (
     <>
@@ -135,10 +138,12 @@ export default function ListaTarea() {
                           style={{ marginRight: "5px" }}
                           variant="outline-success"
                           onClick={()=>{
+                            if (!puedeCompletarTarea(usuario.nombre_perfil, iteracion, tarea) || tarea.pertenece == 0) return;
                             setCompletar(true)
                             setTareaSeleccionada(tarea.id_tarea)
                           }}
-                          className={tarea.estado == '1' || tarea.pertenece == 0 || comprobacionEspectador ? "hidden":""}
+                          disabled={!puedeCompletarTarea(usuario.nombre_perfil, iteracion, tarea) || tarea.pertenece == 0}
+                          className={tarea.pertenece == 0 ? "hidden":""}
                         >
                           <FontAwesomeIcon icon={faSquareCheck} />
                         </Button>
@@ -151,10 +156,12 @@ export default function ListaTarea() {
                           style={{ marginRight: "5px" }}
                           variant="outline-danger"
                           onClick={async ()=>{
+                            if (!puedeModificar) return;
                             setDeshacer(true)
                             setTareaSeleccionada(tarea.id_tarea)
                           }}
-                          className={tarea.estado == '0' || comprobacionEspectador ? "hidden":""}
+                          disabled={!puedeModificar}
+                          className={tarea.estado == '0' ? "hidden":""}
                         >
                           <FontAwesomeIcon icon={faSquareXmark} />
                         </Button>
@@ -208,7 +215,9 @@ export default function ListaTarea() {
             <Modal.Footer>
               <Button
                 variant="outline-success"
+                disabled={!puedeConfirmarCompletar}
                 onClick={async () => {
+                  if (!puedeConfirmarCompletar) return;
                   await completarTarea(tareaSeleccionada)
                   setCompletar(false);
                   navigate(0)
@@ -253,7 +262,9 @@ export default function ListaTarea() {
             <Modal.Footer>
               <Button
                 variant="outline-success"
+                disabled={!puedeModificar}
                 onClick={async () => {
+                  if (!puedeModificar) return;
                   await desmarcarTarea(tareaSeleccionada)
                   setDeshacer(false);
                   navigate(0)
