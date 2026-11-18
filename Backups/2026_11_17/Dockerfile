@@ -17,7 +17,7 @@ COPY ./api ./api/
 COPY ./config ./config/
 
 
-FROM php:8.3.36-fpm-alpine
+FROM php:8.5.12-fpm-alpine
 
 RUN apk add --no-cache nginx \
     && docker-php-ext-install pdo pdo_mysql mysqli
