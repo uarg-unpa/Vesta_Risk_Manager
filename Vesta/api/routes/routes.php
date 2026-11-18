@@ -76,8 +76,8 @@ $router->add("POST", "usuario", function () use ($controladorUsuario) {
             ]);
             return;
         }
-        echo json_encode(["creacion" => $resultado]);
         http_response_code(201); // Código de estado 201 Created
+        echo json_encode(["creacion" => $resultado]);
     } else {
         http_response_code(400);
         echo json_encode([

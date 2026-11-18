@@ -648,3 +648,6 @@ packages/react-devtools-shell/dist
 packages/react-devtools-timeline/dist
 
 despliegue/*
+
+# The backend image installs from this lockfile; keep the application build reproducible.
+!Vesta/composer.lock

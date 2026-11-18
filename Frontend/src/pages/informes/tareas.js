@@ -1,4 +1,4 @@
-import pdfMake, { tableLayouts } from "pdfmake/build/pdfmake";
+import pdfMake from "pdfmake/build/pdfmake";
 import "pdfmake/build/vfs_fonts";
 import { formatearFecha, formatearFechaHora } from "../../utils/funciones";
 
@@ -137,5 +137,5 @@ export const informeTarea = (datos) => {
         sectionTitle: { fontSize: 14, bold: true},
       }
     }
-    pdfMake.createPdf(docDefinition, tableLayouts).download("Informe de Tareas a Realizar_" +datos.nombre_proyecto +"_Vesta Risk Manager.pdf");
+    pdfMake.createPdf(docDefinition).download("Informe de Tareas a Realizar_" +datos.nombre_proyecto +"_Vesta Risk Manager.pdf");
   }

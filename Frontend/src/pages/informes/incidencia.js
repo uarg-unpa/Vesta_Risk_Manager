@@ -1,4 +1,4 @@
-import pdfMake, { tableLayouts } from "pdfmake/build/pdfmake";
+import pdfMake from "pdfmake/build/pdfmake";
 import "pdfmake/build/vfs_fonts";
 import { formatearFechaHora } from "../../utils/funciones";
 
@@ -390,7 +390,7 @@ export const informeIncidencia = (datos) => {
     },
   };
   pdfMake
-    .createPdf(docDefinition, tableLayouts)
+    .createPdf(docDefinition)
     .download(
       "Informe de incidencia_Riesgo_" +
         datos.id_riesgo +

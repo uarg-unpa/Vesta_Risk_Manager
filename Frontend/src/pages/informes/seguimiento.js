@@ -1,4 +1,4 @@
-import pdfMake, { tableLayouts } from "pdfmake/build/pdfmake";
+import pdfMake from "pdfmake/build/pdfmake";
 import "pdfmake/build/vfs_fonts";
 import { formatearFechaHora } from "../../utils/funciones";
 
@@ -277,5 +277,5 @@ export const informeSeguimiento = (datos) => {
         sectionTitle: { fontSize: 14, bold: true},
       }
     }
-    pdfMake.createPdf(docDefinition, tableLayouts).download("Informe de Seguimiento de Riesgos_" +datos.nombre_proyecto +"_Vesta Risk Manager.pdf");
+    pdfMake.createPdf(docDefinition).download("Informe de Seguimiento de Riesgos_" +datos.nombre_proyecto +"_Vesta Risk Manager.pdf");
   }

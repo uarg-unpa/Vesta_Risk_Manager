@@ -9,12 +9,13 @@ import {
 } from 'chart.js';
 import React, {useRef, forwardRef, useImperativeHandle} from 'react';
 import { useTema } from '../context/temaContext';
+import { agruparPuntosTongji, etiquetaEjeTongji, etiquetaTooltipTongji, pluginCantidadTongji } from './datosMatrizTonji';
 
 ChartJS.register(PointElement, LinearScale, Title, Tooltip, Legend);
   
   // Función que devuelve el color de cada celda (1x1)
   function getRiskColor(x, y) {
-    const riesgo = x * y; // esto es solo un ejemplo, podés ajustar según lógica real
+    const riesgo = x * y;
   
     if (riesgo < 9) return "#2ecc71"; // verde
     if (riesgo < 36) return "#f1c40f"; // amarillo
@@ -51,19 +52,20 @@ ChartJS.register(PointElement, LinearScale, Title, Tooltip, Legend);
     const scatterRef = useRef(null);
     const { temaOscuro } = useTema();
     const colorTexto = temaOscuro ? '#f3f4f6' : '#1f2937';
+    const puntosAgrupados = agruparPuntosTongji(puntos);
     const options = {
       responsive: false,
       scales: {
         x: {
           min: 0,
           max: 11,
-          ticks: { stepSize: 1, color: colorTexto },
+          ticks: { stepSize: 1, color: colorTexto, callback: etiquetaEjeTongji },
           title: { display: true, text: 'Impacto', color: colorTexto },
         },
         y: {
           min: 0,
           max: 11,
-          ticks: { stepSize: 1, color: colorTexto },
+          ticks: { stepSize: 1, color: colorTexto, callback: etiquetaEjeTongji },
           title: { display: true, text: 'Probabilidad', color: colorTexto },
         },
       },
@@ -71,10 +73,7 @@ ChartJS.register(PointElement, LinearScale, Title, Tooltip, Legend);
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (context) =>{
-              const punto = context.raw;
-              return `${punto.label}, Impacto: ${punto.x}, Probabilidad: ${punto.y}`;
-            }
+            label: (context) => etiquetaTooltipTongji(context.raw)
           },
         },
       },
@@ -91,13 +90,15 @@ ChartJS.register(PointElement, LinearScale, Title, Tooltip, Legend);
         {
           datasets: [
             {
-              data: puntos,
+              data: puntosAgrupados,
               backgroundColor: 'black',
-              pointRadius: 6,
+              pointRadius: puntosAgrupados.map(({ cantidad }) =>
+                Math.max(11, 5 + String(cantidad).length * 4)
+              ),
             },
           ]
         }
-      } options={options} plugins={[backgroundPlugin]} height={280} width={400}/>
+      } options={options} plugins={[backgroundPlugin, pluginCantidadTongji]} height={280} width={400}/>
     );
   }
 

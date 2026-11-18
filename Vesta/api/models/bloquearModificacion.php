@@ -7,7 +7,9 @@ class Bloquear
         if (self::verificarBloqueo($archivo, $token)) {
             return ['bloqueado' => true];
         }
-        file_put_contents($archivo, json_encode(['timestamp' => time(), "token" => $token]));
+        if (@file_put_contents($archivo, json_encode(['timestamp' => time(), "token" => $token]), LOCK_EX) === false) {
+            throw new RuntimeException('No se pudo guardar el bloqueo del usuario.');
+        }
         return ['bloqueado' => false];
     }
 
