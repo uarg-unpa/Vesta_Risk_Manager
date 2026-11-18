@@ -81,26 +81,54 @@ class Tarea
         }
     }
 
-    public function eliminarTarea($id_tarea)
+    public function eliminarTarea($id_tarea, $id_plan)
     {
-        $query = "DELETE FROM tarea WHERE id_tarea = ?";
+        $query = "UPDATE tarea SET activo = 0 WHERE id_tarea = ? AND id_plan = ? AND activo = 1";
         $stmt = $this->conexion->prepare($query);
-        $stmt->bind_param("i", $id_tarea);
+        $stmt->bind_param("ii", $id_tarea, $id_plan);
 
         if (!$stmt->execute()) {
-            throw new Exception("Error al eliminar el usuario: " . $stmt->error);
-            return false;
-        } else {
-            return true;
+            throw new Exception("Error al eliminar la tarea: " . $stmt->error);
+        }
+        return $stmt->affected_rows > 0;
+    }
+
+    public function perteneceAPlan($id_tarea, $id_plan)
+    {
+        $query = "SELECT id_tarea FROM tarea WHERE id_tarea = ? AND id_plan = ? AND activo = 1";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param('ii', $id_tarea, $id_plan);
+        $stmt->execute();
+        return (bool) $stmt->get_result()->fetch_assoc();
+    }
+
+    public function desactivarParticipantesPlan($id_plan)
+    {
+        $query = "UPDATE participante_tarea pt JOIN tarea t ON pt.id_tarea = t.id_tarea
+                  SET pt.activo = 0 WHERE t.id_plan = ? AND pt.activo = 1";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("i", $id_plan);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al desactivar los responsables del plan: " . $stmt->error);
+        }
+    }
+
+    public function desactivarTareasPlan($id_plan)
+    {
+        $query = "UPDATE tarea SET activo = 0 WHERE id_plan = ? AND activo = 1";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("i", $id_plan);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al desactivar las tareas del plan: " . $stmt->error);
         }
     }
 
     public function obtenerResponsablesTarea($id_tarea)
     {
         $query = "SELECT u.* FROM tarea t 
-                    inner join participante_tarea pr on pr.id_tarea = t.id_tarea 
+                    inner join participante_tarea pr on pr.id_tarea = t.id_tarea and pr.activo = 1
                     inner join usuario u on pr.id_usuario = u.id_usuario
-                    where t.id_tarea = ?";
+                    where t.id_tarea = ? and t.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_tarea);
         $stmt->execute();
@@ -119,8 +147,8 @@ class Tarea
         $query = "SELECT t.*, CASE WHEN pt.id_usuario IS NOT NULL THEN 1 ELSE 0 END AS pertenece 
         from tarea t 
         inner join plan p on t.id_plan = p.id_plan
-        left join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = ? 
-        where p.id_proyecto = ? and p.id_iteracion = ? 
+        left join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = ? and pt.activo = 1
+        where p.id_proyecto = ? and p.id_iteracion = ? and p.activo = 1 and t.activo = 1
         order by pertenece desc, t.fecha_inicio asc";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("iii", $id_usuario, $id_proyecto, $id_iteracion);
@@ -145,8 +173,8 @@ class Tarea
         $query = "SELECT t.*, CASE WHEN pt.id_usuario IS NOT NULL THEN 1 ELSE 0 END AS pertenece 
         from tarea t 
         inner join plan p on t.id_plan = p.id_plan
-        left join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = ? 
-        where p.id_proyecto = ? and p.id_iteracion = ? 
+        left join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = ? and pt.activo = 1
+        where p.id_proyecto = ? and p.id_iteracion = ? and p.activo = 1 and t.activo = 1
         order by pertenece desc, t.fecha_inicio asc
         limit $cantidad_tareas offset $offset";
 
@@ -169,7 +197,7 @@ class Tarea
     {
         $totalQuery = $this->conexion->query("select count(*) as total from tarea t 
         inner join plan p on t.id_plan = p.id_plan
-        where p.id_proyecto = $id_proyecto and p.id_iteracion = $id_iteracion");
+        where p.id_proyecto = $id_proyecto and p.id_iteracion = $id_iteracion and p.activo = 1 and t.activo = 1");
         $totalTareas = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalTareas / $cantidadTareas);
 
@@ -188,8 +216,8 @@ class Tarea
         $query = "SELECT t.* 
         from tarea t 
         inner join plan p on t.id_plan = p.id_plan
-        inner join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = ? 
-        where p.id_proyecto = ? and p.id_iteracion = ?
+        inner join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = ? and pt.activo = 1
+        where p.id_proyecto = ? and p.id_iteracion = ? and p.activo = 1 and t.activo = 1
         order by estado asc, t.fecha_inicio asc
         limit $cantidad_tareas offset $offset";
 
@@ -212,8 +240,8 @@ class Tarea
     {
         $totalQuery = $this->conexion->query("select count(*) as total from tarea t 
         inner join plan p on t.id_plan = p.id_plan
-        inner join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = $id_usuario 
-        where p.id_proyecto = $id_proyecto and p.id_iteracion = $id_iteracion");
+        inner join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.id_usuario = $id_usuario and pt.activo = 1
+        where p.id_proyecto = $id_proyecto and p.id_iteracion = $id_iteracion and p.activo = 1 and t.activo = 1");
         $totalTareas = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalTareas / $cantidadTareas);
 
@@ -222,7 +250,7 @@ class Tarea
 
     public function completarTarea($id_tarea)
     {
-        $query = "UPDATE tarea set estado = ?, fecha_fin_real = ? where id_tarea = ?";
+        $query = "UPDATE tarea set estado = ?, fecha_fin_real = ? where id_tarea = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ssi", $this->estado, $this->fecha_fin_real, $id_tarea);
         if (!$stmt->execute()) {
@@ -235,7 +263,7 @@ class Tarea
 
     public function desmarcarTarea($id_tarea)
     {
-        $query = "UPDATE tarea set estado = ?, fecha_fin_real = ? where id_tarea = ?";
+        $query = "UPDATE tarea set estado = ?, fecha_fin_real = ? where id_tarea = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ssi", $this->estado, $this->fecha_fin_real, $id_tarea);
         if (!$stmt->execute()) {
@@ -251,9 +279,9 @@ class Tarea
         $query = "SELECT t.*,p.id_riesgo, p.tipo as tipo_plan, GROUP_CONCAT(distinct u.nombre order by u.nombre separator ', ') as responsables
         FROM tarea t 
         inner join plan p on t.id_plan = p.id_plan
-        inner join participante_tarea pt on t.id_tarea = pt.id_tarea 
+        inner join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.activo = 1
         inner join usuario u on pt.id_usuario = u.id_usuario
-        where t.id_tarea = ?
+        where t.id_tarea = ? and t.activo = 1 and p.activo = 1
         GROUP BY t.id_tarea
         ";
         $stmt = $this->conexion->prepare($query);
@@ -263,11 +291,11 @@ class Tarea
         return $resultado;
     }
 
-    public function actualizarTarea($id_tarea)
+    public function actualizarTarea($id_tarea, $id_plan)
     {
-        $query = "UPDATE tarea set nombre = ?, descripcion =?, estado = ?, fecha_inicio = ?, fecha_fin = ?,  fecha_fin_real = ?  where id_tarea = ?";
+        $query = "UPDATE tarea set nombre = ?, descripcion =?, estado = ?, fecha_inicio = ?, fecha_fin = ?,  fecha_fin_real = ?  where id_tarea = ? and id_plan = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
-        $stmt->bind_param("ssssssi", $this->nombre, $this->descripcion, $this->estado, $this->fecha_inicio, $this->fecha_fin, $this->fecha_fin_real, $id_tarea);
+        $stmt->bind_param("ssssssii", $this->nombre, $this->descripcion, $this->estado, $this->fecha_inicio, $this->fecha_fin, $this->fecha_fin_real, $id_tarea, $id_plan);
         if ($stmt->execute()) {
             return true;
         } else {
@@ -277,7 +305,7 @@ class Tarea
     }
 
     public function obtenerIdProyecto($id_tarea){
-        $query = "select p.id_proyecto from tarea t inner join plan p on t.id_plan = p.id_plan where t.id_tarea = ?";
+        $query = "select p.id_proyecto from tarea t inner join plan p on t.id_plan = p.id_plan where t.id_tarea = ? and t.activo = 1 and p.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_tarea);
         $stmt->execute();

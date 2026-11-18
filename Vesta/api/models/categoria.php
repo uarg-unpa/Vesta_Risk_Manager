@@ -82,7 +82,7 @@ class Categoria
         $query = "SELECT c.nombre, COALESCE(sum(r.factor_riesgo), 0) as total_riesgo  
                 from categoria c
                 inner join proyecto_categoria pc on c.id_categoria = pc.id_categoria 
-                left join riesgo r on r.id_categoria = c.id_categoria and r.id_proyecto = ?
+                left join riesgo r on r.id_categoria = c.id_categoria and r.id_proyecto = ? and r.activo = 1
                 group by c.id_categoria, c.nombre";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_proyecto);
@@ -159,30 +159,13 @@ class Categoria
 
     public function eliminarCategoria($id_categoria)
     {
-        $stmt = NULL;
-        $cantidadProyectos = $this->obtenerCantidadProyectosCategoria($id_categoria);
-        if ($cantidadProyectos < 1) {
-            $query = "DELETE FROM categoria where id_categoria = ?";
-            $stmt = $this->conexion->prepare($query);
-            $stmt->bind_param("i", $id_categoria);
-        } else {
-            $query = "UPDATE categoria SET estado = ? where id_categoria = ?";
-            $stmt = $this->conexion->prepare($query);
-            $stmt->bind_param("si", $this->estado, $id_categoria);
-        }
-        if ($stmt->execute()) {
-            return true;
-        } else {
+        $query = "UPDATE categoria SET estado = 'inactivo' where id_categoria = ? and estado = 'activo'";
+        $stmt = $this->conexion->prepare($query);
+        $stmt->bind_param("i", $id_categoria);
+        if (!$stmt->execute()) {
             throw new Exception("Error al eliminar una categoria: " . $stmt->error);
-            return false;
         }
-    }
-
-    private function obtenerCantidadProyectosCategoria($id_categoria)
-    {
-        $totalQuery = $this->conexion->query("SELECT count(DISTINCT pc.id_proyecto) as total from categoria c inner join proyecto_categoria pc on c.id_categoria = pc.id_categoria where c.id_categoria = {$id_categoria}");
-        $totalProyectos = $totalQuery->fetch_assoc()['total'];
-        return $totalProyectos;
+        return $stmt->affected_rows > 0;
     }
 
     public function actualizarCategoria()

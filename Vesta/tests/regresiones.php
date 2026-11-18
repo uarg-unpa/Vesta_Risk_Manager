@@ -9,6 +9,15 @@ function comprobar(bool $condicion, string $mensaje): void
 
 $raiz = dirname(__DIR__);
 $rutas = file_get_contents($raiz . '/api/routes/routes.php');
+comprobar(!str_contains($rutas, '"DELETE", "perfil/{id}"'), 'No debe quedar un endpoint de borrado de perfil, ni siquiera comentado');
+comprobar(
+    !str_contains(file_get_contents($raiz . '/api/controllers/gestorUsuario.php'), 'function eliminarPerfil('),
+    'No debe quedar un controlador de borrado de perfil sin ruta'
+);
+comprobar(
+    !str_contains(file_get_contents($raiz . '/api/models/perfil.php'), 'function eliminarPerfil('),
+    'No debe quedar SQL de borrado de perfil sin ruta'
+);
 $inicio = strpos($rutas, '$router->add("POST", "usuario"');
 $fin = strpos($rutas, '$router->add("PUT", "usuario/', $inicio);
 $creacion = substr($rutas, $inicio, $fin - $inicio);

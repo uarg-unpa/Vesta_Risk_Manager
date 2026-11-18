@@ -127,6 +127,8 @@ class GestorProyecto
         $this->proyecto->setFechaFin(null);
         $comprobar = !empty($data["nombre"] && !empty($data["descripcion"])) && !empty($data["estado"]);
         if ($comprobar) {
+            $this->conexion->begin_transaction();
+            try {
             vincularTabla::eliminarVinculo($this->conexion, "proyecto_participante", "id_proyecto", $id_proyecto);
             $this->proyecto->setNombre($data["nombre"]);
             $this->proyecto->setDescripcion($data["descripcion"]);
@@ -146,7 +148,7 @@ class GestorProyecto
 
             if (!empty($data["iteraciones_eliminadas"])) {
                 foreach ($data["iteraciones_eliminadas"] as $iteracion) {
-                    $this->iteracion->eliminarIteracion($iteracion["id_iteracion"]);
+                    $this->iteracion->eliminarIteracion($iteracion["id_iteracion"], $id_proyecto);
                 }
             }
 
@@ -162,7 +164,12 @@ class GestorProyecto
                     }
                 }
             }
+            $this->conexion->commit();
             return $resultado;
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }

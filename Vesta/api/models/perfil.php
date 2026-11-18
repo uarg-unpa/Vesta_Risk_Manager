@@ -104,19 +104,4 @@ class Perfil
         }
     }
 
-    // Eliminar perfil
-    public function eliminarPerfil($id)
-    {
-        $query = "DELETE FROM perfil WHERE id_perfil = ?";
-        $stmt = $this->conexion->prepare($query);
-        $stmt->bind_param("i", $id);
-
-        if (!$stmt->execute()) {
-            throw new Exception("Error al eliminar el usuario: " . $stmt->error);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
 }

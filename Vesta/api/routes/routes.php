@@ -149,21 +149,6 @@ $router->add("GET", "perfiles", function () use ($controladorUsuario) {
 //     }
 // });
 
-// $router->add("DELETE", "perfil/{id}",function($id) use($controladorUsuario){
-//     $validado = validarJWT($controladorUsuario);
-//     if ($validado) {
-//         $resultado = $controladorUsuario->eliminarPerfil($id);
-//         echo json_encode(["eliminado"=>$resultado]); 
-//     } else {
-//         header('HTTP/1.1 403 Forbidden');
-//         echo json_encode([
-//             "error" => "No tienes permisos para realizar esta acción o el token es inválido."
-//         ]);
-//     }
-
-// });
-
-
 // $router->add("GET", "perfil/{id}", function($id) use($controladorUsuario) {
 //     $validado = validarJWT($controladorUsuario);
 //     if ($validado) {
@@ -457,6 +442,11 @@ $router->add("DELETE", "proyecto/{id_proyecto}/riesgo/{id_riesgo}", function ($i
 
 $router->add("GET", "proyecto/{id_proyecto}/riesgo/{id_riesgo}", function ($id_proyecto, $id_riesgo) use ($controladorRiesgo) {
     $resultado = $controladorRiesgo->obtenerRiesgoId($id_proyecto, $id_riesgo);
+    if (!$resultado) {
+        http_response_code(404);
+        echo json_encode(["error" => "Riesgo no encontrado."]);
+        return;
+    }
     echo json_encode($resultado);
 }, [fn() => middlewareAuth(), fn() => middlewareAuthorization(["Administrador", "Espectador", "Usuario Estandar"]), fn($params) => middlewareAuthorizationRolProyecto(["Lider del proyecto","Desarrollador"], $params)]);
 
@@ -557,6 +547,11 @@ $router->add("GET", "proyecto/{id_proyecto}/planes/{pagina}", function ($id_proy
 
 $router->add("GET", "proyecto/{id_proyecto}/plan/{id_plan}", function ($id_proyecto, $id_plan) use ($controladorRiesgo) {
     $resultado = $controladorRiesgo->obtenerPlanId($id_plan, $id_proyecto);
+    if ($resultado === null) {
+        http_response_code(404);
+        echo json_encode(["error" => "Plan no encontrado."]);
+        return;
+    }
     echo json_encode($resultado);
 }, [fn() => middlewareAuth(), fn() => middlewareAuthorization(["Administrador", "Espectador", "Usuario Estandar"]), fn($params) => middlewareAuthorizationRolProyecto(["Lider del proyecto"], $params)]);
 
@@ -564,7 +559,7 @@ $router->add("PUT", "proyecto/{id_proyecto}/plan/{id_plan}", function ($id_proye
     $body = file_get_contents('php://input');
     if (!empty($body)) {
         $data = json_decode($body, true);
-        $resultado = $controladorRiesgo->actualizarPlan($id_plan, $data);
+        $resultado = $controladorRiesgo->actualizarPlan($id_proyecto, $id_plan, $data);
         echo json_encode(["modificado" => $resultado]);
     } else {
         echo json_encode(["modificado" => false]);
@@ -572,7 +567,7 @@ $router->add("PUT", "proyecto/{id_proyecto}/plan/{id_plan}", function ($id_proye
 }, [fn() => middlewareAuth(), fn() => middlewareAuthorization(["Usuario Estandar"]), fn($params) => middlewareAuthorizationRolProyecto(["Lider del proyecto"], $params)]);
 
 $router->add("DELETE", "proyecto/{id_proyecto}/plan/{id_plan}", function ($id_proyecto, $id_plan) use ($controladorRiesgo) {
-    $resultado = $controladorRiesgo->eliminarPlan($id_plan);
+    $resultado = $controladorRiesgo->eliminarPlan($id_proyecto, $id_plan);
     echo json_encode(["eliminado" => $resultado]);
 }, [fn() => middlewareAuth(), fn() => middlewareAuthorization(["Usuario Estandar"]), fn($params) => middlewareAuthorizationRolProyecto(["Lider del proyecto"], $params)]);
 
@@ -604,6 +599,11 @@ $router->add("GET", "incidencia/{id_incidencia}/informe", function ($id_incidenc
 
 $router->add("GET", "incidencia/{id_incidencia}", function ($id_incidencia) use ($controladorRiesgo) {
     $resultado = $controladorRiesgo->obtenerIncidenciaId($id_incidencia);
+    if (!$resultado) {
+        http_response_code(404);
+        echo json_encode(["error" => "Incidencia no encontrada."]);
+        return;
+    }
     echo json_encode($resultado);
 }, [fn() => middlewareAuth(), fn() => middlewareAuthorization(["Administrador", "Espectador", "Usuario Estandar"]), fn($params) => middlewareAuthorizationRolProyecto(["Lider del proyecto","Desarrollador"], $params)]);
 
@@ -635,6 +635,11 @@ $router->add("GET", "proyecto/{id_proyecto}/tareas/{id_usuario}/{pagina}", funct
 
 $router->add("GET", "tarea/{id_tarea}", function ($id_tarea) use ($controladorRiesgo) {
     $resultado = $controladorRiesgo->obtenerTareaId($id_tarea);
+    if (!$resultado) {
+        http_response_code(404);
+        echo json_encode(["error" => "Tarea no encontrada."]);
+        return;
+    }
     echo json_encode($resultado);
 }, [fn() => middlewareAuth(), fn() => middlewareAuthorization(["Administrador", "Espectador", "Usuario Estandar"]), fn($params) => middlewareAuthorizationRolProyecto(["Lider del proyecto","Desarrollador"], $params)]);
 

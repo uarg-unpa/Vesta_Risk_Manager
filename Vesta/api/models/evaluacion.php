@@ -68,7 +68,7 @@ class Evaluacion
 
     public function actualizarEvaluacion($id_evaluacion, $id_usuario)
     {
-        $query = "UPDATE evaluacion SET descripcion = ?, impacto = ?, probabilidad = ?, fecha_realizacion = ?, id_usuario = ? WHERE id_evaluacion = ?";
+        $query = "UPDATE evaluacion SET descripcion = ?, impacto = ?, probabilidad = ?, fecha_realizacion = ?, id_usuario = ? WHERE id_evaluacion = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("siisii", $this->descripcion, $this->impacto, $this->probabilidad, $this->fecha_realizacion, $id_usuario, $id_evaluacion);
         if ($stmt->execute()) {
@@ -104,7 +104,7 @@ class Evaluacion
                         END AS nivel_riesgo,
                         id_evaluacion
                     FROM evaluacion
-                    WHERE id_proyecto = ? AND id_iteracion = ?
+                    WHERE id_proyecto = ? AND id_iteracion = ? AND activo = 1
                 ) AS e ON e.nivel_riesgo = niveles.nivel_riesgo
                 GROUP BY 
                     niveles.nivel_riesgo
@@ -127,7 +127,7 @@ class Evaluacion
         $query = "SELECT r.id_riesgo, e.id_evaluacion, e.descripcion, e.impacto, e.probabilidad 
                 FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-                where e.id_iteracion = ? and e.id_proyecto = ?";
+                 where e.id_iteracion = ? and e.id_proyecto = ? and e.activo = 1 and r.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
         $stmt->execute();
@@ -151,7 +151,7 @@ class Evaluacion
         $query = "SELECT r.id_riesgo, e.id_evaluacion, e.descripcion, e.impacto, e.probabilidad 
                 FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and r.id_proyecto = e.id_proyecto 
-                where e.id_iteracion = ? and e.id_proyecto = ?
+                 where e.id_iteracion = ? and e.id_proyecto = ? and e.activo = 1 and r.activo = 1
                 limit $cantidad_evaluaciones offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
@@ -177,7 +177,7 @@ class Evaluacion
         $query = "SELECT r.id_riesgo, e.id_evaluacion, e.descripcion, e.impacto, e.probabilidad 
                 FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and r.id_proyecto = e.id_proyecto 
-                where e.id_iteracion = ? and e.id_proyecto = ? and e.id_usuario = ?
+                 where e.id_iteracion = ? and e.id_proyecto = ? and e.id_usuario = ? and e.activo = 1 and r.activo = 1
                 limit $cantidad_evaluaciones offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("iii", $id_iteracion, $id_proyecto, $id_usuario);
@@ -195,7 +195,7 @@ class Evaluacion
     {
         $totalQuery = $this->conexion->query("SELECT count(*) as total from evaluacion e 
         inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-        where e.id_proyecto = $id_proyecto and e.id_iteracion = $id_iteracion");
+         where e.id_proyecto = $id_proyecto and e.id_iteracion = $id_iteracion and e.activo = 1 and r.activo = 1");
         $totalEvaluaciones = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalEvaluaciones / $cantidadEvaluaciones);
 
@@ -206,7 +206,7 @@ class Evaluacion
     {
         $totalQuery = $this->conexion->query("select count(*) as total from evaluacion e 
         inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-        where e.id_proyecto = $id_proyecto and e.id_iteracion = $id_iteracion and e.id_usuario = $id_usuario");
+         where e.id_proyecto = $id_proyecto and e.id_iteracion = $id_iteracion and e.id_usuario = $id_usuario and e.activo = 1 and r.activo = 1");
         $totalEvaluaciones = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalEvaluaciones / $cantidadEvaluaciones);
 
@@ -225,7 +225,7 @@ class Evaluacion
         $query = "SELECT r.id_riesgo, e.id_evaluacion, e.descripcion, e.impacto, e.probabilidad 
                 FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and r.id_proyecto = e.id_proyecto 
-                where e.id_iteracion < ? and e.id_proyecto = ?
+                 where e.id_iteracion < ? and e.id_proyecto = ? and e.activo = 1 and r.activo = 1
                 limit $cantidad_evaluaciones offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
@@ -251,7 +251,7 @@ class Evaluacion
         $query = "SELECT r.id_riesgo, e.id_evaluacion, e.descripcion, e.impacto, e.probabilidad 
                 FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-                where e.id_iteracion < ? and e.id_proyecto = ? and e.id_usuario = ?
+                 where e.id_iteracion < ? and e.id_proyecto = ? and e.id_usuario = ? and e.activo = 1 and r.activo = 1
                 limit $cantidad_evaluaciones offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("iii", $id_iteracion, $id_proyecto, $id_usuario);
@@ -269,7 +269,7 @@ class Evaluacion
     {
         $totalQuery = $this->conexion->query("select count(*) as total from evaluacion e 
         inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-        where e.id_proyecto = $id_proyecto and e.id_iteracion < $id_iteracion and e.id_usuario = $id_usuario");
+         where e.id_proyecto = $id_proyecto and e.id_iteracion < $id_iteracion and e.id_usuario = $id_usuario and e.activo = 1 and r.activo = 1");
         $totalEvaluaciones = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalEvaluaciones / $cantidadEvaluaciones);
 
@@ -280,7 +280,7 @@ class Evaluacion
     {
         $totalQuery = $this->conexion->query("select count(*) as total from evaluacion e 
         inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-        where e.id_proyecto = $id_proyecto and e.id_iteracion < $id_iteracion");
+         where e.id_proyecto = $id_proyecto and e.id_iteracion < $id_iteracion and e.activo = 1 and r.activo = 1");
         $totalEvaluaciones = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalEvaluaciones / $cantidadEvaluaciones);
 
@@ -290,7 +290,7 @@ class Evaluacion
     {
         $query = "SELECT r.id_riesgo as label, e.impacto as x, e.probabilidad as y FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-                where e.id_iteracion = ? and e.id_proyecto = ?";
+                 where e.id_iteracion = ? and e.id_proyecto = ? and e.activo = 1 and r.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
         $stmt->execute();
@@ -306,7 +306,7 @@ class Evaluacion
     {
         $query = "SELECT r.id_riesgo, e.id_evaluacion, e.descripcion, e.impacto, e.probabilidad FROM evaluacion e 
                 inner join riesgo r on e.id_riesgo = r.id_riesgo and e.id_proyecto = r.id_proyecto 
-                where e.id_iteracion < ? and e.id_proyecto = ?";
+                 where e.id_iteracion < ? and e.id_proyecto = ? and e.activo = 1 and r.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
         $stmt->execute();
@@ -324,7 +324,7 @@ class Evaluacion
         inner join riesgo r on e.id_riesgo = r.id_riesgo and r.id_proyecto = e.id_proyecto 
         inner join iteracion i on e.id_iteracion = i.id_iteracion
         left join usuario u on e.id_usuario = u.id_usuario
-        where e.id_evaluacion = ?";
+         where e.id_evaluacion = ? and e.activo = 1 and r.activo = 1 and i.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_evaluacion);
         $stmt->execute();

@@ -47,7 +47,7 @@ class Iteracion
             $offset = ($pagina - 1) * $cantidad_iteraciones;
         }
         
-        $query = "SELECT * from iteracion where id_proyecto = ? order by id_iteracion desc limit $cantidad_iteraciones offset $offset";
+        $query = "SELECT * from iteracion where id_proyecto = ? and activo = 1 order by id_iteracion desc limit $cantidad_iteraciones offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_proyecto);
         $stmt->execute();
@@ -65,7 +65,7 @@ class Iteracion
     private function obtenerCantidadPaginasIteraciones($cantidad_iteracion, $id_proyecto)
     {
         $totalQuery = $this->conexion->query("select count(*) as total from iteracion i 
-        where i.id_proyecto = $id_proyecto");
+        where i.id_proyecto = $id_proyecto and i.activo = 1");
         $totalTareas = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalTareas / $cantidad_iteracion);
 
@@ -87,7 +87,7 @@ class Iteracion
 
     public function actualizarIteracion($id_iteracion, $id_proyecto)
     {
-        $query = "UPDATE iteracion SET nombre = ?, fecha_inicio = ?, fecha_fin = ? WHERE id_iteracion = ? and id_proyecto = ?";
+        $query = "UPDATE iteracion SET nombre = ?, fecha_inicio = ?, fecha_fin = ? WHERE id_iteracion = ? and id_proyecto = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("sssii", $this->nombre, $this->fecha_inicio, $this->fecha_fin, $id_iteracion, $id_proyecto);
         if ($stmt->execute()) {
@@ -98,18 +98,31 @@ class Iteracion
         }
     }
 
-    public function eliminarIteracion($id_iteracion)
+    public function eliminarIteracion($id_iteracion, $id_proyecto)
     {
-        $query = "DELETE FROM iteracion WHERE id_iteracion = ?";
+        $query = "UPDATE iteracion SET activo = 0 WHERE id_iteracion = ? AND id_proyecto = ? AND activo = 1";
         $stmt = $this->conexion->prepare($query);
-        $stmt->bind_param("i", $id_iteracion);
+        $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
 
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            throw new Exception("Error al eliminar el usuario: " . $stmt->error);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al desactivar la iteración: " . $stmt->error);
+        }
+        if ($stmt->affected_rows === 0) {
             return false;
         }
+        foreach ([
+            "UPDATE participante_tarea pt JOIN tarea t ON pt.id_tarea = t.id_tarea JOIN plan p ON t.id_plan = p.id_plan SET pt.activo = 0 WHERE p.id_iteracion = ?",
+            "UPDATE tarea t JOIN plan p ON t.id_plan = p.id_plan SET t.activo = 0 WHERE p.id_iteracion = ?",
+            "UPDATE plan SET activo = 0 WHERE id_iteracion = ?",
+            "UPDATE evaluacion SET activo = 0 WHERE id_iteracion = ?",
+        ] as $query) {
+            $stmt = $this->conexion->prepare($query);
+            $stmt->bind_param('i', $id_iteracion);
+            if (!$stmt->execute()) {
+                throw new RuntimeException('No se pudieron desactivar las dependencias de la iteración.');
+            }
+        }
+        return true;
     }
 
 }

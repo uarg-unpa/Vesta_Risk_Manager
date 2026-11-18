@@ -46,7 +46,7 @@ class Plan
     {
         $query = "SELECT p.id_plan, p.descripcion, p.tipo, r.id_riesgo, r.factor_riesgo FROM plan p 
                 inner join riesgo r on p.id_riesgo = r.id_riesgo 
-                where p.id_iteracion = ? and p.id_proyecto = ?";
+                where p.id_iteracion = ? and p.id_proyecto = ? and p.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
         $stmt->execute();
@@ -69,7 +69,7 @@ class Plan
 
         $query = "SELECT p.id_plan, p.descripcion, p.tipo, r.id_riesgo, r.factor_riesgo FROM plan p 
                 inner join riesgo r on p.id_riesgo = r.id_riesgo and p.id_proyecto = r.id_proyecto 
-                where p.id_iteracion = ? and p.id_proyecto = ?
+                where p.id_iteracion = ? and p.id_proyecto = ? and p.activo = 1
                 limit $cantidad_planes offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
@@ -85,7 +85,7 @@ class Plan
     private function obtenerCantidadPaginasActuales($cantidad_planes, $id_proyecto, $id_iteracion)
     {
         $totalQuery = $this->conexion->query("select count(*) as total from plan p 
-        where p.id_proyecto = $id_proyecto and p.id_iteracion = $id_iteracion");
+        where p.id_proyecto = $id_proyecto and p.id_iteracion = $id_iteracion and p.activo = 1");
         $totalPlanes = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalPlanes / $cantidad_planes);
 
@@ -109,7 +109,8 @@ class Plan
         ON p.tipo = tipos.tipo
         AND p.id_proyecto = ?
         AND p.id_riesgo = ?
-        AND p.id_iteracion = ?";
+        AND p.id_iteracion = ?
+        AND p.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("iii", $id_proyecto, $id_riesgo, $id_iteracion);
         $stmt->execute();
@@ -126,7 +127,7 @@ class Plan
     {
         $query = "SELECT p.descripcion, p.tipo, r.id_riesgo, r.factor_riesgo FROM plan p 
                 inner join riesgo r on p.id_riesgo = r.id_riesgo 
-                where p.id_iteracion < ? and p.id_proyecto = ?";
+                where p.id_iteracion < ? and p.id_proyecto = ? and p.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
         $stmt->execute();
@@ -149,7 +150,7 @@ class Plan
 
         $query = "SELECT p.id_plan, p.descripcion, p.tipo, r.id_riesgo, r.factor_riesgo FROM plan p 
                 inner join riesgo r on p.id_riesgo = r.id_riesgo and p.id_proyecto = r.id_proyecto
-                where p.id_iteracion < ? and p.id_proyecto = ?
+                where p.id_iteracion < ? and p.id_proyecto = ? and p.activo = 1
                 limit $cantidad_planes offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_iteracion, $id_proyecto);
@@ -165,7 +166,7 @@ class Plan
     private function obtenerCantidadPaginasAnteriores($cantidad_planes, $id_proyecto, $id_iteracion)
     {
         $totalQuery = $this->conexion->query("select count(*) as total from plan p 
-        where p.id_proyecto = $id_proyecto and p.id_iteracion < $id_iteracion");
+        where p.id_proyecto = $id_proyecto and p.id_iteracion < $id_iteracion and p.activo = 1");
         $totalPlanes = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalPlanes / $cantidad_planes);
 
@@ -174,7 +175,7 @@ class Plan
 
     public function obtenerPlanId($id_plan)
     {
-        $query = "SELECT * FROM plan where id_plan = ?";
+        $query = "SELECT p.* FROM plan p where p.id_plan = ? and p.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_plan);
         $stmt->execute();
@@ -184,7 +185,7 @@ class Plan
 
     public function obtenerTareasPlan($id_plan)
     {
-        $query = "SELECT * from tarea where id_plan = ?";
+        $query = "SELECT t.* from tarea t where t.id_plan = ? and t.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_plan);
         $stmt->execute();
@@ -200,9 +201,9 @@ class Plan
     public function obtenerTareasPlanInforme($id_plan)
     {
         $query = "SELECT t.*, GROUP_CONCAT(distinct u.nombre order by u.nombre separator ', ') as responsables from tarea t
-        inner join participante_tarea pt on t.id_tarea = pt.id_tarea
+        inner join participante_tarea pt on t.id_tarea = pt.id_tarea and pt.activo = 1
         inner join usuario u on u.id_usuario = pt.id_usuario 
-        where id_plan = ?
+        where t.id_plan = ? and t.activo = 1
         GROUP BY t.id_tarea
         ";
         $stmt = $this->conexion->prepare($query);
@@ -230,17 +231,15 @@ class Plan
         }
     }
 
-    public function eliminarPlan($id_plan)
+    public function eliminarPlan($id_plan, $id_proyecto)
     {
-        $query = "DELETE from plan where id_plan = ?";
+        $query = "UPDATE plan SET activo = 0 WHERE id_plan = ? AND id_proyecto = ? AND activo = 1";
         $stmt = $this->conexion->prepare($query);
-        $stmt->bind_param("i", $id_plan);
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            throw new Exception("Error al eliminar el plan: " . $stmt->error);
-            return false;
+        $stmt->bind_param("ii", $id_plan, $id_proyecto);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al desactivar el plan: " . $stmt->error);
         }
+        return $stmt->affected_rows === 1;
     }
 
 }

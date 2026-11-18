@@ -142,8 +142,8 @@ class Proyecto
     public function obtenerTodosProyectoLider($correo)
     {
         $query = "SELECT p.* from proyecto p 
-        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto
-        inner join usuario u on u.id_usuario = pp.id_usuario where u.email = ? and pp.rol = 'lider del proyecto'";
+        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto and pp.activo = 1
+        inner join usuario u on u.id_usuario = pp.id_usuario where u.email = ? and u.activo = 1 and pp.rol = 'lider del proyecto'";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $correo);
         $stmt->execute();
@@ -165,9 +165,9 @@ class Proyecto
         }
 
         $query = "SELECT p.* from proyecto p 
-        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto
+        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto and pp.activo = 1
         inner join usuario u on u.id_usuario = pp.id_usuario 
-        where u.email = ? and pp.rol = 'lider del proyecto' 
+        where u.email = ? and u.activo = 1 and pp.rol = 'lider del proyecto'
         limit $cantidad_proyectos offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $correo);
@@ -184,8 +184,8 @@ class Proyecto
     private function obtenerCantidadPaginasLider($cantidad_proyectos, $correo)
     {
         $query = "SELECT count(*) as total from proyecto p 
-        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto
-        inner join usuario u on u.id_usuario = pp.id_usuario where u.email = ? and pp.rol = 'lider del proyecto'";
+        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto and pp.activo = 1
+        inner join usuario u on u.id_usuario = pp.id_usuario where u.email = ? and u.activo = 1 and pp.rol = 'lider del proyecto'";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $correo);
         $stmt->execute();
@@ -197,9 +197,9 @@ class Proyecto
     public function obtenerTodosProyectoDesarrollador($correo)
     {
         $query = "SELECT p.* from proyecto p 
-        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto
+        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto and pp.activo = 1
         inner join usuario u on u.id_usuario = pp.id_usuario 
-        where u.email = ? and pp.rol = 'desarrollador'";
+        where u.email = ? and u.activo = 1 and pp.rol = 'desarrollador'";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $correo);
         $stmt->execute();
@@ -221,9 +221,9 @@ class Proyecto
         }
 
         $query = "SELECT p.* from proyecto p 
-        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto
+        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto and pp.activo = 1
         inner join usuario u on u.id_usuario = pp.id_usuario 
-        where u.email = ? and pp.rol = 'desarrollador' 
+        where u.email = ? and u.activo = 1 and pp.rol = 'desarrollador'
         limit $cantidad_proyectos offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $correo);
@@ -240,8 +240,8 @@ class Proyecto
     private function obtenerCantidadPaginasDesarrollador($cantidad_proyectos, $correo)
     {
         $query = "SELECT count(*) as total from proyecto p 
-        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto
-        inner join usuario u on u.id_usuario = pp.id_usuario where u.email = ? and pp.rol = 'desarrollador'";
+        inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto and pp.activo = 1
+        inner join usuario u on u.id_usuario = pp.id_usuario where u.email = ? and u.activo = 1 and pp.rol = 'desarrollador'";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $correo);
         $stmt->execute();
@@ -283,7 +283,7 @@ class Proyecto
 
     public function obtenerParticipanteProyectoId($id)
     {
-        $query = "SELECT u.*, pp.rol FROM `proyecto` p inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto inner join usuario u on u.id_usuario = pp.id_usuario WHERE p.id_proyecto = ?";
+        $query = "SELECT u.*, pp.rol FROM `proyecto` p inner join proyecto_participante pp on p.id_proyecto = pp.id_proyecto inner join usuario u on u.id_usuario = pp.id_usuario WHERE p.id_proyecto = ? and pp.activo = 1 and u.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -298,7 +298,7 @@ class Proyecto
 
     public function obtenerIteracionProyectoId($id)
     {
-        $query = "SELECT i.* from proyecto p inner join iteracion i on p.id_proyecto = i.id_proyecto WHERE p.id_proyecto = ?";
+        $query = "SELECT i.* from proyecto p inner join iteracion i on p.id_proyecto = i.id_proyecto WHERE p.id_proyecto = ? and i.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -349,7 +349,7 @@ class Proyecto
 
     public function obtenerIteracionActual($id_proyecto, $fecha_actual)
     {
-        $query = "SELECT i.id_iteracion, i.nombre, i.fecha_inicio, i.fecha_fin from iteracion i where i.id_proyecto = ? and (? BETWEEN i.fecha_inicio and i.fecha_fin)";
+        $query = "SELECT i.id_iteracion, i.nombre, i.fecha_inicio, i.fecha_fin from iteracion i where i.id_proyecto = ? and i.activo = 1 and (? BETWEEN i.fecha_inicio and i.fecha_fin)";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("is", $id_proyecto, $fecha_actual);
         $stmt->execute();
@@ -359,7 +359,7 @@ class Proyecto
 
     public function obtenerUltimaIteracion($id_proyecto)
     {
-        $query = "SELECT i.id_iteracion, i.nombre, i.fecha_inicio, i.fecha_fin from proyecto p inner join iteracion i on p.id_proyecto = i.id_proyecto where p.id_proyecto = ? order by i.id_iteracion desc limit 1";
+        $query = "SELECT i.id_iteracion, i.nombre, i.fecha_inicio, i.fecha_fin from proyecto p inner join iteracion i on p.id_proyecto = i.id_proyecto where p.id_proyecto = ? and i.activo = 1 order by i.id_iteracion desc limit 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_proyecto);
         $stmt->execute();
@@ -373,7 +373,7 @@ class Proyecto
             (SELECT * FROM (
             SELECT i.id_iteracion, i.nombre, i.fecha_inicio
             FROM iteracion i
-            WHERE i.id_proyecto = ?
+            WHERE i.id_proyecto = ? and i.activo = 1
                 AND i.fecha_inicio < ?
             ORDER BY i.fecha_inicio DESC
         ) AS anteriores)
@@ -382,7 +382,7 @@ class Proyecto
 
         (SELECT i.id_iteracion, i.nombre, i.fecha_inicio
         FROM iteracion i
-        WHERE i.id_proyecto = ?
+        WHERE i.id_proyecto = ? and i.activo = 1
             AND ? BETWEEN i.fecha_inicio AND i.fecha_fin)
 
         UNION
@@ -390,7 +390,7 @@ class Proyecto
         (SELECT * FROM (
             SELECT i.id_iteracion, i.nombre, i.fecha_inicio
             FROM iteracion i
-            WHERE i.id_proyecto = ?
+            WHERE i.id_proyecto = ? and i.activo = 1
                 AND i.fecha_inicio > ?
             ORDER BY i.fecha_inicio ASC
         ) AS siguientes)
@@ -421,7 +421,7 @@ class Proyecto
     }
 
     public function obtenerRolUsuarioProyecto($id_proyecto, $id_usuario){
-        $query = "SELECT rol from proyecto_participante where id_proyecto = ? and id_usuario = ?";
+        $query = "SELECT rol from proyecto_participante where id_proyecto = ? and id_usuario = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_proyecto, $id_usuario);
         $stmt->execute();

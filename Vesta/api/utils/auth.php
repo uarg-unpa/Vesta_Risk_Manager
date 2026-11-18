@@ -122,7 +122,15 @@ function decodificarJWT()
 function middlewareAuth()
 {
     $validacion = decodificarJWT();
-    if (!$validacion) {
+    $usuarioActivo = false;
+    if ($validacion && isset($validacion->id_usuario)) {
+        $conexion = BDConexion::getInstancia();
+        $stmt = $conexion->prepare('SELECT id_usuario FROM usuario WHERE id_usuario = ? AND activo = 1');
+        $stmt->bind_param('i', $validacion->id_usuario);
+        $stmt->execute();
+        $usuarioActivo = (bool) $stmt->get_result()->fetch_assoc();
+    }
+    if (!$usuarioActivo) {
         header('HTTP/1.1 403 Forbidden');
         echo json_encode([
             "error" => "No tienes permisos para realizar esta acción o el token es inválido."

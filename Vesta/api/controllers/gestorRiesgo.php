@@ -96,12 +96,32 @@ class GestorRiesgo
 
     public function eliminarRiesgo($id_proyecto, $id_riesgo)
     {
-        vincularTabla::eliminarVinculoRiesgo($this->conexion, "participante_riesgo", "id_proyecto", "id_riesgo", $id_proyecto, $id_riesgo);
-        vincularTabla::eliminarVinculoRiesgo($this->conexion, "evaluacion", "id_proyecto", "id_riesgo", $id_proyecto, $id_riesgo);
-        vincularTabla::eliminarVinculoRiesgo($this->conexion, "plan", "id_proyecto", "id_riesgo", $id_proyecto, $id_riesgo);
-        // $this->categoria->setEstado("inactivo");
-        $resultado = $this->riesgo->eliminarRiesgo($id_proyecto, $id_riesgo);
-        return $resultado;
+        $this->conexion->begin_transaction();
+        try {
+            if (!$this->riesgo->eliminarRiesgo($id_proyecto, $id_riesgo)) {
+                $this->conexion->rollback();
+                return false;
+            }
+            foreach ([
+                "UPDATE participante_tarea pt JOIN tarea t ON t.id_tarea = pt.id_tarea JOIN plan p ON p.id_plan = t.id_plan SET pt.activo = 0 WHERE p.id_proyecto = ? AND p.id_riesgo = ?",
+                "UPDATE tarea t JOIN plan p ON p.id_plan = t.id_plan SET t.activo = 0 WHERE p.id_proyecto = ? AND p.id_riesgo = ?",
+                "UPDATE plan SET activo = 0 WHERE id_proyecto = ? AND id_riesgo = ?",
+                "UPDATE incidencia SET activo = 0 WHERE id_proyecto = ? AND id_riesgo = ?",
+                "UPDATE evaluacion SET activo = 0 WHERE id_proyecto = ? AND id_riesgo = ?",
+                "UPDATE participante_riesgo SET activo = 0 WHERE id_proyecto = ? AND id_riesgo = ?",
+            ] as $query) {
+                $stmt = $this->conexion->prepare($query);
+                $stmt->bind_param('ii', $id_proyecto, $id_riesgo);
+                if (!$stmt->execute()) {
+                    throw new RuntimeException('No se pudo desactivar el riesgo y sus dependencias.');
+                }
+            }
+            $this->conexion->commit();
+            return true;
+        } catch (Throwable $error) {
+            $this->conexion->rollback();
+            throw $error;
+        }
     }
 
 
@@ -146,13 +166,23 @@ class GestorRiesgo
     {
         $comprobar = !empty($data["descripcion"] && !empty($data["categoria"])) && !empty($data["responsables"]);
         if ($comprobar) {
+            if (!$this->riesgo->obtenerRiesgoId($id_proyecto, $id_riesgo)) {
+                return false;
+            }
+            $this->conexion->begin_transaction();
+            try {
             vincularTabla::eliminarVinculoRiesgo($this->conexion, "participante_riesgo", "id_proyecto", "id_riesgo", $id_proyecto, $id_riesgo);
             $this->riesgo->setDescripcion($data["descripcion"]);
             $resultado = $this->riesgo->actualizarRiesgo($id_riesgo, $data["categoria"], $id_proyecto);
             foreach ($data["responsables"] as $id_usuario) {
                 vincularTabla::crearVinculoRiesgo($this->conexion, "participante_riesgo", "id_usuario", "id_riesgo", "id_proyecto", $id_usuario, $id_riesgo, $id_proyecto);
             }
+            $this->conexion->commit();
             return $resultado;
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }
@@ -161,6 +191,9 @@ class GestorRiesgo
     public function obtenerRiesgoId($id_proyecto, $id_riesgo)
     {
         $resultado = $this->riesgo->obtenerRiesgoId($id_proyecto, $id_riesgo);
+        if (!$resultado) {
+            return null;
+        }
         $responsables = $this->riesgo->obtenerParticipantesRiesgo($id_proyecto, $id_riesgo);
         foreach ($responsables as $responsable) {
             $resultado["responsables"][] = $responsable["id_usuario"];
@@ -331,6 +364,9 @@ class GestorRiesgo
     public function obtenerPlanId($id_plan, $id_proyecto)
     {
         $resultado = $this->plan->obtenerPlanId($id_plan);
+        if (!$resultado || (int) $resultado["id_proyecto"] !== (int) $id_proyecto) {
+            return null;
+        }
         $resultado["riesgo"] = $this->obtenerRiesgoId($resultado["id_proyecto"], $resultado["id_riesgo"]);
         $resultado["planes_realizado"] = $this->obtenerCantidadPlanes($id_proyecto, $resultado["id_riesgo"], $resultado["id_iteracion"]);
         $resultado["tareas"] = $this->plan->obtenerTareasPlan($id_plan);
@@ -340,28 +376,38 @@ class GestorRiesgo
         return $resultado;
     }
 
-    public function actualizarPlan($id_plan, $data)
+    public function actualizarPlan($id_proyecto, $id_plan, $data)
     {
         $comprobar = !empty($data["descripcion"]) && !empty($data["tipo"]) && !empty($data["tareas"]);
         if ($comprobar) {
+            $plan = $this->plan->obtenerPlanId($id_plan);
+            if (!$plan || (int) $plan['id_proyecto'] !== (int) $id_proyecto) {
+                return false;
+            }
+            $this->conexion->begin_transaction();
+            try {
             $this->plan->setTipo($data["tipo"]);
             $this->plan->setDescripcion($data["descripcion"]);
             $this->plan->actualizarPlan($id_plan);
             if (!empty($data["tareas_eliminadas"])) {
                 foreach ($data["tareas_eliminadas"] as $tarea) {
-                    vincularTabla::eliminarVinculo($this->conexion, "participante_tarea", "id_tarea", $tarea["id_tarea"]);
-                    $this->tarea->eliminarTarea($tarea["id_tarea"]);
+                    if ($this->tarea->eliminarTarea($tarea["id_tarea"], $id_plan)) {
+                        vincularTabla::eliminarVinculo($this->conexion, "participante_tarea", "id_tarea", $tarea["id_tarea"]);
+                    }
                 }
             }
             foreach ($data["tareas"] as $tarea) {
                 if (!empty($tarea["id_tarea"])) {
+                    if (!$this->tarea->perteneceAPlan($tarea["id_tarea"], $id_plan)) {
+                        throw new InvalidArgumentException('La tarea no pertenece al plan activo.');
+                    }
                     $this->tarea->setNombre($tarea["nombre"]);
                     $this->tarea->setDescripcion($tarea["descripcion"]);
                     $this->tarea->setEstado($tarea["estado"]);
                     $this->tarea->setFechaInicio($tarea["fecha_inicio"]);
                     $this->tarea->setFechaFin($tarea["fecha_fin"]);
                     $this->tarea->setFechaFinReal($tarea["fecha_fin_real"]);
-                    $this->tarea->actualizarTarea($tarea["id_tarea"]);
+                    $this->tarea->actualizarTarea($tarea["id_tarea"], $id_plan);
                     vincularTabla::eliminarVinculo($this->conexion, "participante_tarea", "id_tarea", $tarea["id_tarea"]);
                     foreach ($tarea["responsables"] as $responsable) {
                         vincularTabla::crearVinculo($this->conexion, "participante_tarea", "id_usuario", "id_tarea", $responsable["id_usuario"], $tarea["id_tarea"]);
@@ -379,18 +425,33 @@ class GestorRiesgo
                     }
                 }
             }
+            $this->conexion->commit();
             return $id_plan > 0;
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }
     }
 
-    public function eliminarPlan($id_plan)
+    public function eliminarPlan($id_proyecto, $id_plan)
     {
-        vincularTabla::eliminarVinculo($this->conexion, "participante_tarea", "id_tarea", $id_plan);
-        vincularTabla::eliminarVinculo($this->conexion, "tarea", "id_plan", $id_plan);
-        $resultado = $this->plan->eliminarPlan($id_plan);
-        return $resultado;
+        $this->conexion->begin_transaction();
+        try {
+            if (!$this->plan->eliminarPlan($id_plan, $id_proyecto)) {
+                $this->conexion->rollback();
+                return false;
+            }
+            $this->tarea->desactivarParticipantesPlan($id_plan);
+            $this->tarea->desactivarTareasPlan($id_plan);
+            $this->conexion->commit();
+            return true;
+        } catch (Throwable $error) {
+            $this->conexion->rollback();
+            throw $error;
+        }
     }
 
     public function obtenerIncidenciasProyecto($id_proyecto)
@@ -441,13 +502,22 @@ class GestorRiesgo
     {
         $comprobar = !empty($data["descripcion"]) && !empty($data["nombre"]) && !empty($data["version"]);
         if ($comprobar) {
-            $this->categoria->setEstado("inactivo");
-            $this->categoria->eliminarCategoria($id_categoria);
-            $this->categoria->setNombre($data["nombre"]);
-            $this->categoria->setDescripcion($data["descripcion"]);
-            $this->categoria->setVersion($data["version"] + 1);
-            $id_categoria = $this->categoria->actualizarCategoria();
-            return $id_categoria > 0;
+            $this->conexion->begin_transaction();
+            try {
+                if (!$this->categoria->eliminarCategoria($id_categoria)) {
+                    $this->conexion->rollback();
+                    return false;
+                }
+                $this->categoria->setNombre($data["nombre"]);
+                $this->categoria->setDescripcion($data["descripcion"]);
+                $this->categoria->setVersion($data["version"] + 1);
+                $nuevaCategoria = $this->categoria->actualizarCategoria();
+                $this->conexion->commit();
+                return $nuevaCategoria > 0;
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }

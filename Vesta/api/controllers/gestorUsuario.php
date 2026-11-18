@@ -84,8 +84,11 @@ class GestorUsuario
     public function obtenerUsuarioId($id, $token)
     {
         if (is_numeric($id)) {
-            $bloqueado = $this->bloquearModificacion("usuario", $id, $token);
             $resultado = $this->usuario->obtenerUsuarioId($id);
+            if (!$resultado) {
+                return null;
+            }
+            $bloqueado = $this->bloquearModificacion("usuario", $id, $token);
             $this->perfil->setNombre($resultado["nombre_perfil"]);
             $resultado["bloqueado"] = $bloqueado["bloqueado"];
             return $resultado;
@@ -99,11 +102,25 @@ class GestorUsuario
     {
         $comprobar = $this->verificarCorreo($data["correo"]) && !empty($data["nombre"] && !empty($data["perfil"]));
         if ($comprobar) {
+            $this->conexion->begin_transaction();
+            try {
             $this->usuario->setNombre($data["nombre"]);
             $this->usuario->setEmail($data["correo"]);
             $resultado = $this->usuario->crearUsuario();
-            vincularTabla::crearVinculo($this->conexion, "usuario_perfil", "id_usuario", "id_perfil", $resultado, $data["perfil"]);
+            $vinculo = $this->conexion->prepare("SELECT id_usuario FROM usuario_perfil WHERE id_usuario = ?");
+            $vinculo->bind_param("i", $resultado);
+            $vinculo->execute();
+            if ($vinculo->get_result()->fetch_assoc()) {
+                vincularTabla::modificarVinculo($this->conexion, "usuario_perfil", "id_usuario", "id_perfil", $resultado, $data["perfil"]);
+            } else {
+                vincularTabla::crearVinculo($this->conexion, "usuario_perfil", "id_usuario", "id_perfil", $resultado, $data["perfil"]);
+            }
+            $this->conexion->commit();
             return !empty($resultado);
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }
@@ -113,11 +130,21 @@ class GestorUsuario
     {
         $comprobar = $this->verificarCorreo($data["correo"]) && !empty($data["nombre"] && !empty($data["perfil"]));
         if ($comprobar) {
+            if (!$this->usuario->obtenerUsuarioId($id)) {
+                return false;
+            }
+            $this->conexion->begin_transaction();
+            try {
             $this->usuario->setNombre($data["nombre"]);
             $this->usuario->setEmail($data["correo"]);
             $resultado = $this->usuario->actualizarUsuario($id);
             vincularTabla::modificarVinculo($this->conexion, "usuario_perfil", "id_usuario", "id_perfil", $id, $data["perfil"]);
+            $this->conexion->commit();
             return $resultado;
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }
@@ -126,16 +153,21 @@ class GestorUsuario
     public function eliminarUsuario($id)
     {
         if (is_numeric($id)) {
-            vincularTabla::eliminarVinculo($this->conexion, "usuario_perfil", "id_usuario", $id);
-            vincularTabla::eliminarVinculo($this->conexion, "proyecto_participante", "id_usuario", $id);
-            vincularTabla::eliminarVinculo($this->conexion, "participante_riesgo", "id_usuario", $id);
-            vincularTabla::eliminarVinculo($this->conexion, "participante_tarea", "id_usuario", $id);
-            vincularTabla::modificarVinculo($this->conexion, "evaluacion", "id_usuario", "id_usuario", $id, NULL);
-            vincularTabla::modificarVinculo($this->conexion, "incidencia", "id_usuario", "id_usuario", $id, NULL);
-            $this->usuario->setNombre(null);
-            $this->usuario->setEmail(null);
-            $resultado = $this->usuario->eliminarUsuario($id);
-            return $resultado;
+            $this->conexion->begin_transaction();
+            try {
+                if (!$this->usuario->eliminarUsuario($id)) {
+                    $this->conexion->rollback();
+                    return false;
+                }
+                vincularTabla::eliminarVinculo($this->conexion, "proyecto_participante", "id_usuario", $id);
+                vincularTabla::eliminarVinculo($this->conexion, "participante_riesgo", "id_usuario", $id);
+                vincularTabla::eliminarVinculo($this->conexion, "participante_tarea", "id_usuario", $id);
+                $this->conexion->commit();
+                return true;
+            } catch (Throwable $error) {
+                $this->conexion->rollback();
+                throw $error;
+            }
         } else {
             return false;
         }
@@ -187,20 +219,6 @@ class GestorUsuario
             foreach ($data["permisos"] as $permiso) {
                 vincularTabla::crearVinculo($this->conexion, "perfil_permiso", "id_perfil", "id_permiso", $id, $permiso);
             }
-            return $resultado;
-        } else {
-            return false;
-        }
-    }
-
-    public function eliminarPerfil($id)
-    {
-        if (is_numeric($id)) {
-            vincularTabla::eliminarVinculo($this->conexion, "perfil_permiso", "id_perfil", $id);
-            vincularTabla::eliminarVinculo($this->conexion, "usuario_perfil", "id_perfil", $id);
-            $this->perfil->setNombre(null);
-            $this->perfil->setPermisos(null);
-            $resultado = $this->perfil->eliminarPerfil($id);
             return $resultado;
         } else {
             return false;

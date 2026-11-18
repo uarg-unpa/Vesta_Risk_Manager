@@ -51,7 +51,7 @@ class Incidencia
         inner join participante_riesgo pr on pr.id_riesgo = r.id_riesgo
         inner join usuario ur on ur.id_usuario = pr.id_usuario
         inner join categoria c on c.id_categoria = r.id_categoria
-        where i.id_incidencia = ?";
+        where i.id_incidencia = ? and i.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_incidencia);
         $stmt->execute();
@@ -66,7 +66,7 @@ class Incidencia
         $query = "select i.id_incidencia, i.descripcion, i.gravedad, i.fecha_ocurrencia, i.id_riesgo, 
         u.nombre as responsable_nombre from incidencia i 
         inner join usuario u on i.id_usuario = u.id_usuario 
-        where i.id_proyecto = ?";
+        where i.id_proyecto = ? and i.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_proyecto);
         $stmt->execute();
@@ -90,7 +90,7 @@ class Incidencia
         $query = "select i.id_incidencia, i.descripcion, i.gravedad, i.fecha_ocurrencia, i.id_riesgo, 
         u.nombre as responsable_nombre from incidencia i 
         inner join usuario u on i.id_usuario = u.id_usuario 
-        where i.id_proyecto = ?
+        where i.id_proyecto = ? and i.activo = 1
         limit $cantidad_incidencias offset $offset";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_proyecto);
@@ -106,7 +106,7 @@ class Incidencia
     private function obtenerCantidadPaginas($cantidadIncidencias, $id_proyecto)
     {
         $totalQuery = $this->conexion->query("select count(*) as total from incidencia i 
-        where i.id_proyecto = $id_proyecto");
+        where i.id_proyecto = $id_proyecto and i.activo = 1");
         $totalIncidencias = $totalQuery->fetch_assoc()['total'];
         $totalPaginas = ceil($totalIncidencias / $cantidadIncidencias);
 
@@ -114,7 +114,7 @@ class Incidencia
     }
     public function obtenerTodasIncidenciaUsuario($id_proyecto, $id_usuario)
     {
-        $query = "select i.id_incidencia, i.descripcion, i.gravedad, i.fecha_ocurrencia, i.id_riesgo, u.nombre as responsable from incidencia i inner join usuario u on i.id_usuario = u.id_usuario where id_proyecto = ? and id_usuario = ?";
+        $query = "select i.id_incidencia, i.descripcion, i.gravedad, i.fecha_ocurrencia, i.id_riesgo, u.nombre as responsable from incidencia i inner join usuario u on i.id_usuario = u.id_usuario where i.id_proyecto = ? and i.id_usuario = ? and i.activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("ii", $id_proyecto, $id_usuario);
         $stmt->execute();
@@ -128,15 +128,13 @@ class Incidencia
 
     public function eliminarIncidencia($id_incidencia)
     {
-        $query = "DELETE from incidencia where id_incidencia = ?";
+        $query = "UPDATE incidencia SET activo = 0 where id_incidencia = ? and activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_incidencia);
-        if ($stmt->execute()) {
-            return true;
-        } else {
+        if (!$stmt->execute()) {
             throw new Exception("Error al eliminar la incidencia: " . $stmt->error);
-            return false;
         }
+        return $stmt->affected_rows > 0;
     }
 
     public function obtenerIncidenciaId($id_incidencia)
@@ -144,7 +142,7 @@ class Incidencia
         $query = "SELECT i.*, u.nombre as responsable_nombre 
         FROM incidencia i 
         inner join usuario u on i.id_usuario = u.id_usuario
-        where i.id_incidencia = ?
+        where i.id_incidencia = ? and i.activo = 1
         ";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_incidencia);
@@ -157,7 +155,7 @@ class Incidencia
     {
         $query = "SELECT id_proyecto
         FROM incidencia
-        WHERE id_incidencia = ?";
+        WHERE id_incidencia = ? AND activo = 1";
         $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("i", $id_incidencia);
         $stmt->execute();
